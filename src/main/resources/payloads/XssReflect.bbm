@@ -1,0 +1,7 @@
+# 直接标签<script>
+<script src='xss'>
+# 引号突破,突破后才有可能
+'<img src='xss'>
+"<img src='xss'>
+'console.log("xss");'
+"console.log("xss");'
