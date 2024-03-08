@@ -2,15 +2,14 @@ package com.alumm0x.ui;
 
 import org.jetbrains.annotations.NotNull;
 
-import burp.IHttpRequestResponsePersisted;
+import burp.IHttpRequestResponse;
 
 //存在漏洞的url信息类
-//log.add(new LogEntry(id, callbacks.saveBuffersToTempFiles(messageInfo),
-//                            host,path,param,helpers.analyzeResponse(messageInfo.getResponse()).getStatusCode()));
+@SuppressWarnings("rawtypes")
 public class LogEntry implements Comparable
 {
     public final int id;
-    public  IHttpRequestResponsePersisted requestResponse;
+    public  IHttpRequestResponse requestResponse;
     public  String Host;
     public  String Path;
     public  String Method;
@@ -20,7 +19,7 @@ public class LogEntry implements Comparable
     public  String Desc;
 
 
-    public LogEntry(int id, IHttpRequestResponsePersisted requestResponse, String host, String path, String method, short status, String plugin, String risk, String desc)
+    public LogEntry(int id, IHttpRequestResponse requestResponse, String host, String path, String method, short status, String plugin, String risk, String desc)
     {
         // table tab
         this.id = id;

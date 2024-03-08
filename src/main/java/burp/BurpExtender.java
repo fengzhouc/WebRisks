@@ -26,14 +26,6 @@ public class BurpExtender implements IBurpExtender, ITab, IExtensionStateListene
 
         callbacks.setExtensionName("WebRisks");
 
-
-        // //定制UI组件
-        // callbacks.customizeUiComponent(contentPane);
-        // callbacks.customizeUiComponent(panel_a);
-        // callbacks.customizeUiComponent(splitPane);
-        // callbacks.customizeUiComponent(logTable);
-        // callbacks.customizeUiComponent(scrollPane);
-
         //加载插件输出默认信息
         String author = "alumm0x";
         callbacks.printOutput("#Author: "+author);

@@ -174,7 +174,7 @@ class SsrfCallback implements Callback {
     }
 
     private void refreshEntry(IHttpRequestResponse requestResponse) {
-        entry.requestResponse = BurpExtender.callbacks.saveBuffersToTempFiles(requestResponse);
+        entry.requestResponse = requestResponse;
         entry.Host = BurpReqRespTools.getHost(requestResponse);
         entry.Path = BurpReqRespTools.getUrlPath(requestResponse);
         entry.Method = BurpReqRespTools.getMethod(requestResponse);

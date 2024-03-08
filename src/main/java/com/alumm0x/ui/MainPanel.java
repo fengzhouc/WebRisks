@@ -308,7 +308,7 @@ public class MainPanel {
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Request", requestViewer.getComponent());
         tabs.addTab("Response", responseViewer.getComponent());
-        tabs.addTab("Found&Fix", desViewer.getComponent());
+        tabs.addTab("Found & Fix", desViewer.getComponent());
 
         splitPane.setRightComponent(tabs);
 
@@ -459,7 +459,7 @@ public class MainPanel {
             if (!inside) {
                 log.add(new LogEntry(
                     row, 
-                    BurpExtender.callbacks.saveBuffersToTempFiles(messageInfo),
+                    messageInfo,
                     host, 
                     path, 
                     method, 
@@ -487,7 +487,7 @@ public class MainPanel {
             payloads = "";
         }
         int row = log.size();
-        LogEntry entry = new LogEntry(row, BurpExtender.callbacks.saveBuffersToTempFiles(requestResponse),host, path, method, status, plugin, risk, payloads);
+        LogEntry entry = new LogEntry(row, requestResponse,host, path, method, status, plugin, risk, payloads);
         // debug模式则记录所有
         if (DEBUG) {
             try {
