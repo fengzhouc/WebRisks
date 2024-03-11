@@ -28,6 +28,8 @@ public class XssStore extends VulTaskImpl {
     // 标记当前遍历的请求是否符合要求，每次遍历保存的请求都会初始化
     boolean isFound;
     // 用于验证请求2是否出现flag的条件
+    boolean insertFlag = false;
+    // 用于flag注入成功后，验证响应是否随之更新
     boolean check = false;
     // 标记此次检测的编号
     String uuid = UUID.randomUUID().toString().substring(0, 8);
@@ -75,7 +77,7 @@ public class XssStore extends VulTaskImpl {
                     new String(BurpReqRespTools.getReqBody(requestResponse)),
                     BurpReqRespTools.getContentType(requestResponse),
                     new XssStoreCallback(this));
-            } else {
+            }  else {
                 // 检查请求中是否存在请求参数，包含query、body
                 if (BurpReqRespTools.getQuery(requestResponse) != null || BurpReqRespTools.getReqBody(requestResponse).length > 0) {
                     // 存在请求参数，则保存请求
@@ -110,7 +112,7 @@ public class XssStore extends VulTaskImpl {
                                             BurpReqRespTools.getMethod(requestResponse), 
                                             BurpReqRespTools.getStatus(requestResponse), 
                                             XssStore.class.getSimpleName(),
-                                            String.format("【%s】找到参数值出现在响应中的请求，Query参数：%s=%s", uuid, key, value), 
+                                            String.format("【%s】三步走-1 当前请求响应体存在历史请求参数值，Query参数：%s=%s", uuid, key, value), 
                                             null);
                                         // 在此请求中出现在响应体的参数添加flag，进行重放验证
                                         paramKeyValues.add(new ParamKeyValue(key, "WebRisks-XssStore"));
@@ -142,7 +144,7 @@ public class XssStore extends VulTaskImpl {
                                                 BurpReqRespTools.getMethod(requestResponse), 
                                                 BurpReqRespTools.getStatus(requestResponse), 
                                                 XssStore.class.getSimpleName(),
-                                                String.format("【%s】找到参数值出现在响应中的请求，Body参数：%s=%s", uuid, key, value), 
+                                                String.format("【%s】三步走-1 当前请求响应体存在历史请求参数值，Body参数：%s=%s", uuid, key, value), 
                                                 null);
                                             // 在此请求中出现在响应体的参数添加flag，进行重放验证
                                             paramKeyValues.add(new ParamKeyValue(key, "WebRisks-XssStore"));
@@ -178,7 +180,7 @@ public class XssStore extends VulTaskImpl {
                                                 BurpReqRespTools.getMethod(requestResponse), 
                                                 BurpReqRespTools.getStatus(requestResponse), 
                                                 XssStore.class.getSimpleName(),
-                                                String.format("【%s】找到参数值出现在响应中的请求，Body参数：%s=%s", uuid, key, value), 
+                                                String.format("【%s】三步走-1 当前请求响应体存在历史请求参数值，Body参数：%s=%s", uuid, key, value), 
                                                 null);
                                             // 在此请求中出现在响应体的参数添加flag，进行重放验证
                                             paramKeyValues.add(new ParamKeyValue(key, "WebRisks-XssStore"));
@@ -268,19 +270,20 @@ class XssStoreCallback implements Callback {
         String message = null;
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if(response.isSuccessful()){
-            if (!((XssStore)vulTask).check) {
+            if (!((XssStore)vulTask).insertFlag) {
                 // 重放修改参数成功
-                message = String.format("【%s】参数注入flag的请求成功", ((XssStore)vulTask).uuid);
+                message = String.format("【%s】三步走-2 历史请求参数注入flag，重放请求成功", ((XssStore)vulTask).uuid);
                 // 需要重新查看请求2中是否出现flag
-                ((XssStore)vulTask).check = true;
+                ((XssStore)vulTask).insertFlag = true; // 完成注入，标记一下，这样验证请求2的时候就不会再进入这里了，而是进入下面的esle进行验证响应中是否出现flag
+                ((XssStore)vulTask).check = true; // 进行验证，标记一下
                 ((XssStore)vulTask).run();
-            } else if (HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), "WebRisks-XssStore".getBytes()) != -1) {
-                message = String.format("【%s】响应中发现flag，疑似存在存储型Xss", ((XssStore)vulTask).uuid);
+            } else if ( ((XssStore)vulTask).check && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), "WebRisks-XssStore".getBytes()) != -1) {
+                message = String.format("【%s】三步走-3 响应中发现注入的flag，疑似存在存储型Xss", ((XssStore)vulTask).uuid);
             }
         } else {
             // 会存在请求失败
             // 比如做了参数校验，无法提交成功
-            message = String.format("【%s】请求失败，无法进行后续的XssStore的验证，请求人工确认", ((XssStore)vulTask).uuid);
+            message = String.format("【%s】重放失败 ，无法进行后续的XssStore的验证，请求人工确认", ((XssStore)vulTask).uuid);
         }
         // 记录日志
         MainPanel.logAdd(
