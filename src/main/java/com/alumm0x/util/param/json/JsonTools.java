@@ -19,6 +19,10 @@ public class JsonTools {
     // 保存篡改的json串
     public final StringBuilder stringBuilder;
 
+    public String toString(){
+        return stringBuilder.toString();
+    }
+
     public JsonTools(){
         this.stringBuilder = new StringBuilder();
         this.paramKeys = new ArrayList<>();
@@ -110,18 +114,23 @@ public class JsonTools {
         write("]", false);
     }
 
-    /**
+    /**`
      * 解析json字符串里的对象，放回 Map
      * @param object
      * @return Map
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"rawtypes" })
     public static Map jsonObjectToMap(Object object) {
-        String source = object.toString().substring(1,object.toString().length()-1).replace("=",":");
-        JSONObject jsonObject = new JSONObject(source);
-        Map objectMap = jsonObject.toMap();
-        objectMap.forEach((key,value) -> System.out.println(key + "\t" + value));
-        return objectMap;
+        try {
+            JSONObject jsonObject = new JSONObject(object.toString());
+            Map<String, Object> objectMap = jsonObject.toMap();
+            // 打印健值对看看
+            // objectMap.forEach((key,value) -> System.out.println(key + "=" + value));
+            return objectMap;
+        } catch (Exception e) {
+            BurpExtender.callbacks.printError("[jsonObjectToMap] " + e.getMessage());
+        }
+        return null;
     }
 
     // 解析json，然后添加注入字符

@@ -127,7 +127,7 @@ public class XssStore extends VulTaskImpl {
                         if (new String(BurpReqRespTools.getReqBody(nott_RequestResponseWithMarkers)).startsWith("{")) { // Json对象
                             JsonTools tools = new JsonTools();
                             try {
-                                tools.jsonObjHandler(JsonTools.jsonObjectToMap(new String(BurpReqRespTools.getReqBody(requestResponse))), new ParamHandlerImpl() {
+                                tools.jsonObjHandler(JsonTools.jsonObjectToMap(new String(BurpReqRespTools.getReqBody(nott_RequestResponseWithMarkers))), new ParamHandlerImpl() {
                                     @Override
                                     public List<ParamKeyValue> handler(Object key, Object value) {
                                         List<ParamKeyValue> paramKeyValues = new ArrayList<>();
