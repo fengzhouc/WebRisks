@@ -100,15 +100,15 @@ public class XssStore extends VulTaskImpl {
                                 public List<ParamKeyValue> handler(Object key, Object value) {
                                     List<ParamKeyValue> paramKeyValues = new ArrayList<>();
                                     // 查找是否在当前请求响应中出现保存的请求的参数值
-                                    if (!"".equals(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), value.toString().getBytes()) != -1) {
+                                    if (!"".equals(value.toString()) && !isWithe(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
                                         isFound = true;
                                         // 从响应中匹配到了请求参数值，记录一下找到的请求
                                         MainPanel.logAdd(
-                                            nott_RequestResponseWithMarkers, 
-                                            BurpReqRespTools.getHost(nott_RequestResponseWithMarkers), 
-                                            BurpReqRespTools.getUrlPath(nott_RequestResponseWithMarkers),
-                                            BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers), 
-                                            BurpReqRespTools.getStatus(nott_RequestResponseWithMarkers), 
+                                            requestResponse, 
+                                            BurpReqRespTools.getHost(requestResponse), 
+                                            BurpReqRespTools.getUrlPath(requestResponse),
+                                            BurpReqRespTools.getMethod(requestResponse), 
+                                            BurpReqRespTools.getStatus(requestResponse), 
                                             XssStore.class.getSimpleName(),
                                             String.format("【%s】找到参数值出现在响应中的请求，Query参数：%s=%s", uuid, key, value), 
                                             null);
@@ -132,15 +132,15 @@ public class XssStore extends VulTaskImpl {
                                     public List<ParamKeyValue> handler(Object key, Object value) {
                                         List<ParamKeyValue> paramKeyValues = new ArrayList<>();
                                         // 查找是否在当前请求响应中出现保存的请求的参数值
-                                        if (!"".equals(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), value.toString().getBytes()) != -1) {
+                                        if (!"".equals(value.toString()) && !isWithe(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
                                             isFound = true;
                                             // 从响应中匹配到了请求参数值，记录一下找到的请求
                                             MainPanel.logAdd(
-                                                nott_RequestResponseWithMarkers, 
-                                                BurpReqRespTools.getHost(nott_RequestResponseWithMarkers), 
-                                                BurpReqRespTools.getUrlPath(nott_RequestResponseWithMarkers),
-                                                BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers), 
-                                                BurpReqRespTools.getStatus(nott_RequestResponseWithMarkers), 
+                                                requestResponse, 
+                                                BurpReqRespTools.getHost(requestResponse), 
+                                                BurpReqRespTools.getUrlPath(requestResponse),
+                                                BurpReqRespTools.getMethod(requestResponse), 
+                                                BurpReqRespTools.getStatus(requestResponse), 
                                                 XssStore.class.getSimpleName(),
                                                 String.format("【%s】找到参数值出现在响应中的请求，Body参数：%s=%s", uuid, key, value), 
                                                 null);
@@ -169,14 +169,14 @@ public class XssStore extends VulTaskImpl {
                                     public List<ParamKeyValue> handler(Object key, Object value) {
                                         List<ParamKeyValue> paramKeyValues = new ArrayList<>();
                                         // 查找是否在当前请求响应中出现保存的请求的参数值
-                                        if (!"".equals(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), value.toString().getBytes()) != -1) {
+                                        if (!"".equals(value.toString()) && !isWithe(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
                                             // 从响应中匹配到了请求参数值，记录一下找到的请求
                                             MainPanel.logAdd(
-                                                nott_RequestResponseWithMarkers, 
-                                                BurpReqRespTools.getHost(nott_RequestResponseWithMarkers), 
-                                                BurpReqRespTools.getUrlPath(nott_RequestResponseWithMarkers),
-                                                BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers), 
-                                                BurpReqRespTools.getStatus(nott_RequestResponseWithMarkers), 
+                                                requestResponse, 
+                                                BurpReqRespTools.getHost(requestResponse), 
+                                                BurpReqRespTools.getUrlPath(requestResponse),
+                                                BurpReqRespTools.getMethod(requestResponse), 
+                                                BurpReqRespTools.getStatus(requestResponse), 
                                                 XssStore.class.getSimpleName(),
                                                 String.format("【%s】找到参数值出现在响应中的请求，Body参数：%s=%s", uuid, key, value), 
                                                 null);
@@ -208,6 +208,36 @@ public class XssStore extends VulTaskImpl {
             }
         }
     }
+
+    /** 检查是否例外，比如纯数字、true or false，这些类型的参数值不做比较
+     * @param string 参数值
+     * @return
+     */
+    private boolean isWithe(String string) {
+        // 检查是否纯数字
+        if (isNumeric(string)) {
+            return true;
+        }
+        // 检查是否true or false
+        if (string.equalsIgnoreCase("true") || string.equalsIgnoreCase("false")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断字符串是否纯数字
+     * @param str
+     * @return
+     */
+    private boolean isNumeric(String str){  
+        for (int i = str.length();--i>=0;){    
+         if (!Character.isDigit(str.charAt(i))){  
+          return false;  
+         }  
+        }  
+        return true;  
+      }
 }
 
 class XssStoreCallback implements Callback {
