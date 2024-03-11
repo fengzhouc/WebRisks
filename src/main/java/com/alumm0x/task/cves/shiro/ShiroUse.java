@@ -1,6 +1,5 @@
 package com.alumm0x.task.cves.shiro;
 
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -8,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.engine.TaskManager;
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.ToolsUtil;
@@ -19,10 +19,10 @@ import java.util.Locale;
 
 public class ShiroUse extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse) {
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse) {
         return new ShiroUse(requestResponse);
     }
-    private ShiroUse(IHttpRequestResponse requestResponse) {
+    private ShiroUse(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -79,7 +79,7 @@ class ShiroUseCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -95,7 +95,7 @@ class ShiroUseCallback implements Callback {
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
         // 检查响应体是否有内容
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         String setCookie = ToolsUtil.hasHeader(BurpReqRespTools.getRespHeaders(requestResponse), "Set-Cookie");
         if (setCookie != null && setCookie.contains("=deleteMe")) {
             // TODO 如果使用了则看下是否用了默认key

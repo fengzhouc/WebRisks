@@ -8,6 +8,7 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.SourceLoader;
@@ -22,10 +23,10 @@ import java.util.List;
 
 public class XssReflect extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new XssReflect(requestResponse);
     }
-    private XssReflect(IHttpRequestResponse requestResponse) {
+    private XssReflect(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -83,7 +84,7 @@ class XssReflectCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -98,7 +99,7 @@ class XssReflectCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         String ct = ToolsUtil.hasHeader(BurpReqRespTools.getRespHeaders(requestResponse), "Content-Type");
         // 反射性仅存在于响应content-type是页面等会被浏览器渲染的资源，比如json响应是没有的，有也是dom型
         if(ct != null && (

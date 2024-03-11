@@ -1,12 +1,12 @@
 package com.alumm0x.task;
 
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.CommonMess;
@@ -20,10 +20,10 @@ import java.util.regex.Pattern;
 
 public class SmsEmailBoom extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new SmsEmailBoom(requestResponse);
     }
-    private SmsEmailBoom(IHttpRequestResponse requestResponse) {
+    private SmsEmailBoom(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
         CommonMess.SmsEmailBoomCount = 0; //初始化为0
     }
@@ -79,7 +79,7 @@ class SmsEmailBoomCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -94,7 +94,7 @@ class SmsEmailBoomCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.isSuccessful()){
             //如果状态码相同则可能存在问题
             if (BurpReqRespTools.getStatus(requestResponse) == BurpReqRespTools.getStatus(vulTask.requestResponse)

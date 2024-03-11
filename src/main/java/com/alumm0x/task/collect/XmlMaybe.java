@@ -1,21 +1,20 @@
 package com.alumm0x.task.collect;
 
-import burp.IHttpRequestResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.ToolsUtil;
 
 public class XmlMaybe extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new XmlMaybe(requestResponse);
     }
-    private XmlMaybe(IHttpRequestResponse requestResponse) {
+    private XmlMaybe(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 

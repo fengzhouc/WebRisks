@@ -12,11 +12,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.CommonMess;
 
 import burp.BurpExtender;
-import burp.IHttpRequestResponse;
 
 /*
  * VulScanner是一个主动对历史的请求进行扫描的引擎
@@ -39,14 +39,14 @@ public class VulScanner extends Thread {
     @Override
     public void run() {
         // 遍历保存的所有请求
-        for (IHttpRequestResponse messageInfo : CommonMess.requests) {
+        for (HttpRequestResponseWithMarkers messageInfo : CommonMess.requests) {
             // 并发控制，okhttp的并发太高了，不限制下，burp会很卡
             for (String taskClass : TaskManager.tasks) {
                 try {
                     @SuppressWarnings("rawtypes")
                     Class c = Class.forName(taskClass);
                     @SuppressWarnings("unchecked")
-                    Method method = c.getMethod("getInstance", IHttpRequestResponse.class);
+                    Method method = c.getMethod("getInstance", HttpRequestResponseWithMarkers.class);
                     VulTaskImpl t = (VulTaskImpl) method.invoke(null, messageInfo);
                     // callbacks.printError("cehck " + task.getClass().getName());
  

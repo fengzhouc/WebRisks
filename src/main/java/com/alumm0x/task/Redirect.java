@@ -7,6 +7,7 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.SourceLoader;
@@ -35,10 +36,10 @@ public class Redirect extends VulTaskImpl {
 
     boolean isBypass = false; //标记bypass，callback的时候可以判断
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new Redirect(requestResponse);
     }
-    private Redirect(IHttpRequestResponse requestResponse) {
+    private Redirect(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -155,7 +156,7 @@ class RedirectCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -170,7 +171,7 @@ class RedirectCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         //检查响应头Location
         if (response.isRedirect()){
             String location = ToolsUtil.hasHeader(BurpReqRespTools.getRespHeaders(requestResponse), "Location");

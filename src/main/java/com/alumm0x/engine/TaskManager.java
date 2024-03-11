@@ -9,9 +9,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 
 import burp.BurpExtender;
-import burp.IHttpRequestResponse;
 
 // 扫描器，也就是消费队列中的请求，去执行一系列的task
 // 1.1 起一个线程去运行，这样不影响burp的主流程
@@ -23,7 +23,7 @@ public class TaskManager extends Thread {
     //线程池
     public static  ExecutorService taskManagerthreadPool = null;
     //请求队列
-    public static final ArrayBlockingQueue<IHttpRequestResponse> reqQueue = new ArrayBlockingQueue<>(2000);
+    public static final ArrayBlockingQueue<HttpRequestResponseWithMarkers> reqQueue = new ArrayBlockingQueue<>(2000);
     // 开启检测的任务清单
     public static final ArrayList<String> tasks = new ArrayList<String>();
     // 只需要检测一次的清单
@@ -47,7 +47,7 @@ public class TaskManager extends Thread {
         while (STATUS) {
             try {
                 // 这里会阻塞，如果没有请求进来的话
-                IHttpRequestResponse messageInfo = reqQueue.take();
+                HttpRequestResponseWithMarkers messageInfo = reqQueue.take();
                 // 并发控制，okhttp的并发太高了，不限制下，burp会很卡
                 for (String taskClass : tasks) {
                     try {
@@ -63,7 +63,7 @@ public class TaskManager extends Thread {
                         @SuppressWarnings("rawtypes")
                         Class c = Class.forName(taskClass);
                         @SuppressWarnings("unchecked")
-                        Method method = c.getMethod("getInstance", IHttpRequestResponse.class);
+                        Method method = c.getMethod("getInstance", HttpRequestResponseWithMarkers.class);
                         VulTaskImpl t = (VulTaskImpl) method.invoke(null, messageInfo);
                         // callbacks.printError("cehck " + task.getClass().getName());
 

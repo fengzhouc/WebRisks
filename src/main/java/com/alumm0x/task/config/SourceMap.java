@@ -1,17 +1,16 @@
 package com.alumm0x.task.config;
 
-import burp.IHttpRequestResponse;
-
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 
 public class SourceMap extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new SourceMap(requestResponse);
     }
-    private SourceMap(IHttpRequestResponse requestResponse) {
+    private SourceMap(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 

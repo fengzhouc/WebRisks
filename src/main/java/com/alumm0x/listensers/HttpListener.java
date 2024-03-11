@@ -77,7 +77,7 @@ public class HttpListener implements IHttpListener, IMessageEditorController {
                     try {
                         // 使用自定义的IHttpRequestResponse，可在请求及响应中设置高亮数据
                         TaskManager.reqQueue.put(new HttpRequestResponseWithMarkers(messageInfo)); //这里会阻塞
-                        CommonMess.requests.add(messageInfo); //保存IHttpRequestResponse，用于批量扫描
+                        CommonMess.requests.add(new HttpRequestResponseWithMarkers(messageInfo)); //保存IHttpRequestResponse，用于批量扫描
                         // 同步刷新UI
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override

@@ -1,6 +1,5 @@
 package com.alumm0x.task.api;
 
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -8,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.engine.TaskManager;
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.SourceLoader;
@@ -18,10 +18,10 @@ import java.util.List;
 
 public class SwaggerApi extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new SwaggerApi(requestResponse);
     }
-    private SwaggerApi(IHttpRequestResponse requestResponse) {
+    private SwaggerApi(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -59,7 +59,7 @@ class SwaggerApiCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -74,7 +74,7 @@ class SwaggerApiCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.isSuccessful()){
             if (new String(BurpReqRespTools.getRespBody(requestResponse)).contains("<title>Swagger")) {
                 message = "响应中检测到Swagger的特征";

@@ -1,9 +1,8 @@
 package com.alumm0x.task.api;
 
-import burp.IHttpRequestResponse;
-
 import com.alumm0x.engine.TaskManager;
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.SourceLoader;
@@ -18,10 +17,10 @@ import java.io.IOException;
 
 public class FindSensitiveApi extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new FindSensitiveApi(requestResponse);
     }
-    private FindSensitiveApi(IHttpRequestResponse requestResponse) {
+    private FindSensitiveApi(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -55,7 +54,7 @@ class FindSensitiveApiCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -70,7 +69,7 @@ class FindSensitiveApiCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.code() != 404){
             // 状态码不存在则认为存在该API
             message = "根据urlBanner匹配到相关cve的url";

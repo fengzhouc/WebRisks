@@ -1,8 +1,7 @@
 package com.alumm0x.task.config;
 
-import burp.*;
-
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.ToolsUtil;
@@ -15,11 +14,11 @@ import java.util.regex.Pattern;
 
 public class SecureCookie extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new SecureCookie(requestResponse);
     }
 
-    private SecureCookie(IHttpRequestResponse requestResponse) {
+    private SecureCookie(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 

@@ -1,12 +1,12 @@
 package com.alumm0x.task;
 
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.ToolsUtil;
@@ -17,10 +17,10 @@ import java.util.regex.Pattern;
 
 public class UploadSecure extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse) {
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse) {
         return new UploadSecure(requestResponse);
     }
-    private UploadSecure(IHttpRequestResponse requestResponse) {
+    private UploadSecure(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -90,7 +90,7 @@ class UploadSecureCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -105,7 +105,7 @@ class UploadSecureCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.isSuccessful()){
             // 可能响应并没有回馈，所以这时响应是成功的也告警
             message = "修改任意文件后缀请求成功，确认是否上传成功";

@@ -13,9 +13,11 @@ public class HttpRequestResponseWithMarkers implements IHttpRequestResponseWithM
     List<int[]> requestMarkers = new ArrayList<>();
     List<int[]> responseMarkers = new ArrayList<>();
 
-    HttpRequestResponseWithMarkers(IHttpRequestResponse actual) {
+    public HttpRequestResponseWithMarkers(IHttpRequestResponse actual) {
         this.actual = actual;
     }
+
+    public HttpRequestResponseWithMarkers(){    }
 
     /**
      * 在请求中添加内容标记，以高亮显示

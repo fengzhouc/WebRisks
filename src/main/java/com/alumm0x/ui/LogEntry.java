@@ -2,14 +2,15 @@ package com.alumm0x.ui;
 
 import org.jetbrains.annotations.NotNull;
 
-import burp.IHttpRequestResponse;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
+
 
 //存在漏洞的url信息类
 @SuppressWarnings("rawtypes")
 public class LogEntry implements Comparable
 {
     public final int id;
-    public  IHttpRequestResponse requestResponse;
+    public  HttpRequestResponseWithMarkers requestResponse;
     public  String Host;
     public  String Path;
     public  String Method;
@@ -19,7 +20,7 @@ public class LogEntry implements Comparable
     public  String Desc;
 
 
-    public LogEntry(int id, IHttpRequestResponse requestResponse, String host, String path, String method, short status, String plugin, String risk, String desc)
+    public LogEntry(int id, HttpRequestResponseWithMarkers requestResponse, String host, String path, String method, short status, String plugin, String risk, String desc)
     {
         // table tab
         this.id = id;

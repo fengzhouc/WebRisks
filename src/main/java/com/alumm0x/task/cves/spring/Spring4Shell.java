@@ -1,13 +1,13 @@
 package com.alumm0x.task.cves.spring;
 
 
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 
@@ -33,10 +33,10 @@ public class Spring4Shell extends VulTaskImpl{
     private String checkurl = "";
     private String checkMethod = "";
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new Spring4Shell(requestResponse);
     }
-    private Spring4Shell(IHttpRequestResponse requestResponse) {
+    private Spring4Shell(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -104,7 +104,7 @@ class Spring4ShellCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -119,7 +119,7 @@ class Spring4ShellCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.isSuccessful()){
             // paylaod发送请求成功的话，进行webshell的请求确认
             if (!((Spring4Shell)vulTask).isCheck) {

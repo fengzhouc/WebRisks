@@ -1,13 +1,12 @@
 package com.alumm0x.task.collect;
 
-import burp.IHttpRequestResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.SourceLoader;
@@ -16,10 +15,10 @@ public class SensitiveMessage extends VulTaskImpl {
 
     String payloads = "";
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new SensitiveMessage(requestResponse);
     }
-    private SensitiveMessage(IHttpRequestResponse requestResponse) {
+    private SensitiveMessage(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -53,6 +52,7 @@ public class SensitiveMessage extends VulTaskImpl {
                     payloads += "\n" + matcherUid.group();
                     while (matcherUid.find()){ //每次调用后会往后移
                         payloads += "\n" + matcherUid.group();
+                        ((HttpRequestResponseWithMarkers)requestResponse).setResponseMarker(matcherUid.group());
                     }
                 }
                 if (matcherPhone.find()){
@@ -60,6 +60,7 @@ public class SensitiveMessage extends VulTaskImpl {
                     payloads += "\n" + matcherPhone.group();
                     while (matcherPhone.find()){ //每次调用后会往后移
                         payloads += "\n" + matcherPhone.group();
+                        ((HttpRequestResponseWithMarkers)requestResponse).setResponseMarker(matcherPhone.group());
                     }
                 }
                 if (matcherEmail.find()){
@@ -67,6 +68,7 @@ public class SensitiveMessage extends VulTaskImpl {
                     payloads += "\n" + matcherEmail.group();
                     while (matcherEmail.find()){ //每次调用后会往后移
                         payloads += "\n" + matcherEmail.group();
+                        ((HttpRequestResponseWithMarkers)requestResponse).setResponseMarker(matcherEmail.group());
                     }
                 }
                 if (types.size() != 1) {

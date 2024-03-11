@@ -1,9 +1,9 @@
 package com.alumm0x.task;
 
 import burp.BurpExtender;
-import burp.IHttpRequestResponse;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.param.ParamHandlerImpl;
@@ -29,10 +29,10 @@ public class JWTSignNone extends VulTaskImpl {
      */
     boolean useJWT = false;
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new JWTSignNone(requestResponse);
     }
-    private JWTSignNone(IHttpRequestResponse requestResponse) {
+    private JWTSignNone(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -198,7 +198,7 @@ class JWTSignNoneCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -213,7 +213,7 @@ class JWTSignNoneCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.code() == BurpReqRespTools.getStatus(vulTask.requestResponse) 
             && Arrays.equals(BurpReqRespTools.getRespBody(requestResponse),BurpReqRespTools.getRespBody(vulTask.requestResponse))) {
             message = "设置alg=none后请求正常";

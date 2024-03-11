@@ -1,6 +1,5 @@
 package com.alumm0x.task;
 
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -9,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 
@@ -19,11 +19,11 @@ public class BeanParamInject extends VulTaskImpl {
 
     private final StringBuilder stringBuilder;
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new BeanParamInject(requestResponse);
     }
 
-    private BeanParamInject(IHttpRequestResponse requestResponse) {
+    private BeanParamInject(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
         this.stringBuilder = new StringBuilder();
     }
@@ -216,7 +216,7 @@ class BeanParamInjectCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -231,7 +231,7 @@ class BeanParamInjectCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         //如果响应成功，则检查值是否被修改
         if (response.isSuccessful()) {
             // 记录日志

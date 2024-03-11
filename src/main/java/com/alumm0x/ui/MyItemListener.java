@@ -2,6 +2,9 @@ package com.alumm0x.ui;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JCheckBox;
 
 import com.alumm0x.engine.TaskManager;
@@ -12,7 +15,16 @@ import burp.IBurpExtenderCallbacks;
 public class MyItemListener implements ItemListener {
 
     // 标记是否全部勾选
-    boolean isAll = true;
+    boolean isAll = false;
+    // 记录all的checkbox
+    JCheckBox all = null;
+    // 记录仅能通过自勾选的方式开启，不受all控制的任务
+    static List<String> need = new ArrayList<>();
+    static {
+        need.add("XssStore");
+        need.add("Fuzz");
+        need.add("Cve");
+    }
 
     public void itemStateChanged(ItemEvent e) {
         JCheckBox jcb = (JCheckBox) e.getItem();// 将得到的事件强制转化为JCheckBox类
@@ -20,8 +32,10 @@ public class MyItemListener implements ItemListener {
         if (jcb.isSelected()) {// 判断是否被选择
             // 选中则创建对象，存入检查列表
             if (key.equalsIgnoreCase("All")){
+                isAll = true;
+                all = jcb;
                 for (JCheckBox t : MainPanel.taskJBS) {
-                    if (!t.isSelected()) {
+                    if (!need.contains(t.getText()) && !t.isSelected()) {
                         t.setSelected(true);   
                     }
                 }
@@ -73,17 +87,30 @@ public class MyItemListener implements ItemListener {
                     }
                 }
             }
-            // 检查是否全部勾选
-            for (JCheckBox t : MainPanel.taskJBS) {
-                if (t.isSelected()) {
-                    isAll = true; // 设置标签
+            // 检查是否全部勾选，只有未触发过全勾选的情况下才进行检查
+            if (!isAll) {
+                boolean status = true; // 记录检查状态,默认为true，发现一个未勾选的则为false 
+                for (JCheckBox t : MainPanel.taskJBS) {
+                    // 发现有存在未勾选的
+                    if (!t.getText().equalsIgnoreCase("all") && !need.contains(t.getText()) && !t.isSelected()) {
+                        status = false; // 设置标签
+                        break;
+                    }
+                }
+                // 如果全部勾选，则同步勾选all
+                if (status && all != null) {
+                    all.setSelected(true);   
                 }
             }
         } else {
-            // 去勾选，则从列表中删除
+            // 去勾选，则从列表中删除（去勾选没有特例，全部都去掉）
+            // isAll,需要是直接触发的去勾选all才会把所有的去勾选了
             if (key.equalsIgnoreCase("All") && isAll){
+                isAll = false;
                 for (JCheckBox t : MainPanel.taskJBS) {
-                    t.setSelected(false);
+                    if (t.isSelected()) {
+                        t.setSelected(false);   
+                    }
                 }
             }else if (key.equalsIgnoreCase("Collect")){
                 // 信息采集的类
@@ -132,13 +159,9 @@ public class MyItemListener implements ItemListener {
                 MainPanel.intercepts.remove(key);
             }
             // all勾选过才会触发，勾选过才需要任意去勾选时去勾选all
-            if (!key.equalsIgnoreCase("all")) {
-                for (JCheckBox t : MainPanel.taskJBS) {
-                    if (t.getText().equalsIgnoreCase("all")) {
-                        isAll = false; // 设置标签
-                        t.setSelected(false);   
-                    }
-                }
+            if (!need.contains(key) && !key.equalsIgnoreCase("all") && all != null) {
+                isAll = false; // 标记并不是直接触发的all，不需要去勾选所有
+                all.setSelected(false);   
             }
         }
     }

@@ -7,6 +7,7 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.SourceLoader;
@@ -34,10 +35,10 @@ public class SqlInject extends VulTaskImpl {
     }
 
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new SqlInject(requestResponse);
     }
-    private SqlInject(IHttpRequestResponse requestResponse) {
+    private SqlInject(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
         injectStr = BurpExtender.helpers.urlEncode("'\""); // '"
         injectJsonStr = BurpExtender.helpers.urlEncode("\\\'\\\""); // \'\",json格式的使用转义后的，避免json格式不正确
@@ -114,7 +115,7 @@ class SqlInjectCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -134,7 +135,7 @@ class SqlInjectCallback implements Callback {
         // 3.改，会反馈成功与否，前端做提醒，或者是返回修改后的对象信息
         // 4.查，会反馈成功与否，前端做提醒
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         // 如果400就是客户端错误了，大概率异常数据影响请求结构了，不深入检测
         if (response.code() != 400) {
             // 重放的请求响应跟原始的不一样，才进一步判断，两种情况

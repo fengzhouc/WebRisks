@@ -3,11 +3,11 @@ package com.alumm0x.ui;
 import com.alumm0x.engine.TaskManager;
 import com.alumm0x.engine.VulScanner;
 import com.alumm0x.listensers.HttpListener;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.util.ClassNameGet;
 import com.alumm0x.util.CommonMess;
 
 import burp.BurpExtender;
-import burp.IHttpRequestResponse;
 import burp.IHttpService;
 import burp.IMessageEditor;
 import burp.IRequestInfo;
@@ -37,7 +37,7 @@ public class MainPanel {
     public static IMessageEditor requestViewer = null;
     public static IMessageEditor responseViewer = null;
     public static IMessageEditor desViewer = null;
-    public static IHttpRequestResponse currentlyDisplayedItem = null;
+    public static HttpRequestResponseWithMarkers currentlyDisplayedItem = null;
     public static final List<LogEntry> log = new ArrayList<>(); // 记录漏洞的请求，在UI中展示
     public static Table logTable; //视图table对象
     // public static TableRowSorter<TableModel> sorter; //table排序对象
@@ -333,7 +333,7 @@ public class MainPanel {
         // 复选框事件监听器
         MyItemListener myItemListener = new MyItemListener();
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
-        makeItercept("proxy",options,gbaglayout,constraints, myItemListener);
+        makeItercept("proxy",options,gbaglayout,constraints, myItemListener).setSelected(true);;
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeItercept("repeater",options,gbaglayout,constraints, myItemListener);
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
@@ -353,6 +353,8 @@ public class MainPanel {
         makeButton("WebBasic",options,gbaglayout,constraints, myItemListener).setToolTipText("基础web漏洞检测，包含：目录浏览");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("Cve",options,gbaglayout,constraints, myItemListener).setToolTipText("Cve漏洞的检测");
+        constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
+        makeButton("Fuzz",options,gbaglayout,constraints, myItemListener).setToolTipText("模糊测试，大量数据进行探索");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         List<String> clazzs = ClassNameGet.getClazzName("com.alumm0x.task", false);
         Collections.sort(clazzs); // 重新排序
@@ -432,7 +434,7 @@ public class MainPanel {
 
     //显示所有保存的请求
     private static void Show(){
-        for (IHttpRequestResponse messageInfo :
+        for (HttpRequestResponseWithMarkers messageInfo :
                 CommonMess.requests) {
             //返回信息
             IHttpService iHttpService = messageInfo.getHttpService();
@@ -459,7 +461,7 @@ public class MainPanel {
             if (!inside) {
                 log.add(new LogEntry(
                     row, 
-                    messageInfo,
+                    new HttpRequestResponseWithMarkers(messageInfo),
                     host, 
                     path, 
                     method, 
@@ -481,7 +483,7 @@ public class MainPanel {
     // 添加面板展示数据
     // 已经在列表的不添加
     // 添加synchronized防止多线程竞态
-    public static synchronized LogEntry logAdd(IHttpRequestResponse requestResponse, String host, String path, String method, short status, String plugin, String risk, String payloads) {
+    public static synchronized LogEntry logAdd(HttpRequestResponseWithMarkers requestResponse, String host, String path, String method, short status, String plugin, String risk, String payloads) {
         // payload tab会调用getBytes，需要防止空指针
         if (payloads == null) {
             payloads = "";

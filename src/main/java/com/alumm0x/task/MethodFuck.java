@@ -1,12 +1,12 @@
 package com.alumm0x.task;
 
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 
@@ -16,10 +16,10 @@ import java.util.List;
 
 public class MethodFuck extends VulTaskImpl {
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new MethodFuck(requestResponse);
     }
-    private MethodFuck(IHttpRequestResponse requestResponse) {
+    private MethodFuck(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -67,7 +67,7 @@ class MethodFuckCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -82,7 +82,7 @@ class MethodFuckCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (BurpReqRespTools.getStatus(requestResponse) == 200
                 || BurpReqRespTools.getStatus(requestResponse) == 302) {
             message = "发现同一接口存在多请求方式，OriginMethod" + BurpReqRespTools.getMethod(vulTask.requestResponse);

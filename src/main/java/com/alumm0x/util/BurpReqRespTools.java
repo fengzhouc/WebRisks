@@ -13,6 +13,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
+
 /**
  * 因为IHttpRequestResponse可以反复使用，解析获取到其中信息，不想OKHTTP的响应体只能获取一次
  * 所以这里就把所有IHttpRequestResponse的数据获取封装成函数，减少其他类的成员变量
@@ -25,9 +27,9 @@ public class BurpReqRespTools {
      * @param call OKhttp的请求对象
      * @param response OKhttp的响应对象
      * @param httpService burp的IHttpService，使用send功能时需要用到这个，所以需要设置到IHttpRequestResponse
-     * @return IHttpRequestResponse
+     * @return HttpRequestResponseWithMarkers
      */
-    public static IHttpRequestResponse makeBurpReqRespFormOkhttp(Call call, Response response, IHttpRequestResponse requestResponse){
+    public static HttpRequestResponseWithMarkers makeBurpReqRespFormOkhttp(Call call, Response response, IHttpRequestResponse requestResponse){
         IHttpRequestResponse newrequestResponse = new HttpRequestResponseFactory();;//根据响应构造burp的IHttpRequestResponse对象
         byte[] ok_reqInfo = new byte[0];
         byte[] ok_respInfo = new byte[0];
@@ -41,7 +43,7 @@ public class BurpReqRespTools {
         newrequestResponse.setRequest(ok_reqInfo);
         newrequestResponse.setResponse(ok_respInfo);
         newrequestResponse.setHttpService(BurpReqRespTools.getHttpService(requestResponse));
-        return  newrequestResponse;
+        return  new HttpRequestResponseWithMarkers(newrequestResponse);
     }
 
     /**

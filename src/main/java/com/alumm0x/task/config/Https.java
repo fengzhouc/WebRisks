@@ -1,6 +1,5 @@
 package com.alumm0x.task.config;
 
-import burp.*;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -8,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.engine.TaskManager;
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 
@@ -20,11 +20,11 @@ public class Https extends VulTaskImpl {
 
     List<String> message = new ArrayList<>();
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new Https(requestResponse);
     }
 
-    private Https(IHttpRequestResponse requestResponse) {
+    private Https(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -72,7 +72,7 @@ class HttpsCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -86,7 +86,7 @@ class HttpsCallback implements Callback {
 
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.isSuccessful()){
             ((Https)vulTask).message.add("open http");
         }

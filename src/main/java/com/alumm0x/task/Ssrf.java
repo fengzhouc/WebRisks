@@ -3,13 +3,13 @@ package com.alumm0x.task;
 import burp.BurpExtender;
 import burp.IBurpCollaboratorClientContext;
 import burp.IBurpCollaboratorInteraction;
-import burp.IHttpRequestResponse;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.LogEntry;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
@@ -29,10 +29,10 @@ public class Ssrf extends VulTaskImpl {
     public IBurpCollaboratorClientContext collaboratorClientContext;
     public LogEntry entry; // 因为需要刷新dnslog的记录，所以保存log，可以进行数据更新
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new Ssrf(requestResponse);
     }
-    private Ssrf(IHttpRequestResponse requestResponse) {
+    private Ssrf(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
         this.entry =MainPanel.logAdd(
                         requestResponse, 
@@ -121,7 +121,7 @@ class SsrfCallback implements Callback {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
         // 记录日志
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, null, vulTask.requestResponse));
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
@@ -135,7 +135,7 @@ class SsrfCallback implements Callback {
 
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-        IHttpRequestResponse requestResponse = BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse);
+        HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (((Ssrf)vulTask).dnslog) {
             entry.Risk += ",try DnsLog ";
             try {
@@ -173,7 +173,7 @@ class SsrfCallback implements Callback {
         ((Ssrf)vulTask).run();
     }
 
-    private void refreshEntry(IHttpRequestResponse requestResponse) {
+    private void refreshEntry(HttpRequestResponseWithMarkers requestResponse) {
         entry.requestResponse = requestResponse;
         entry.Host = BurpReqRespTools.getHost(requestResponse);
         entry.Path = BurpReqRespTools.getUrlPath(requestResponse);

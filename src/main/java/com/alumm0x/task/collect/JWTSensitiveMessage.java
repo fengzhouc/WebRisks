@@ -1,10 +1,10 @@
 package com.alumm0x.task.collect;
 
 import burp.BurpExtender;
-import burp.IHttpRequestResponse;
 import burp.IParameter;
 
 import com.alumm0x.impl.VulTaskImpl;
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.param.ParamHandlerImpl;
@@ -24,10 +24,10 @@ public class JWTSensitiveMessage extends VulTaskImpl {
      * JWT敏感信息检测。是否在JWT中传输敏感信息，这里主要检测账号密码/token。";
      */
 
-    public static VulTaskImpl getInstance(IHttpRequestResponse requestResponse){
+    public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new JWTSensitiveMessage(requestResponse);
     }
-    private JWTSensitiveMessage(IHttpRequestResponse requestResponse) {
+    private JWTSensitiveMessage(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 

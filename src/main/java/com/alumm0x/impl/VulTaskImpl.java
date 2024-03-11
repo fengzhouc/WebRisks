@@ -2,6 +2,7 @@ package com.alumm0x.impl;
 
 import burp.*;
 
+import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.OkHttpRequester;
 import com.alumm0x.util.Requester;
@@ -11,13 +12,13 @@ import java.util.*;
 
 public abstract class VulTaskImpl extends Thread {
     
-    public IHttpRequestResponse requestResponse;
+    public HttpRequestResponseWithMarkers requestResponse;
 
     //发包器,单例模式
     protected Requester requester;
     protected OkHttpRequester okHttpRequester;
 
-    public VulTaskImpl(IHttpRequestResponse requestResponse) {
+    public VulTaskImpl(HttpRequestResponseWithMarkers requestResponse) {
         this.requestResponse = requestResponse ;
         this.requester = Requester.getInstance(BurpExtender.callbacks, BurpExtender.helpers);
         this.okHttpRequester = OkHttpRequester.getInstance(BurpExtender.callbacks, BurpExtender.helpers);
