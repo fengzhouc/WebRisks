@@ -114,7 +114,7 @@ public class HttpRequestResponseWithMarkers implements IHttpRequestResponseWithM
      * @param smallerArray
      * @return
      */
-    public int indexOf(byte[] outerArray, byte[] smallerArray) {
+    public static int indexOf(byte[] outerArray, byte[] smallerArray) {
         for(int i = 0; i < outerArray.length - smallerArray.length+1; ++i) {
             boolean found = true;
             for(int j = 0; j < smallerArray.length; ++j) {

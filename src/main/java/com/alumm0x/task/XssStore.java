@@ -1,20 +1,36 @@
 package com.alumm0x.task;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
 import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
-import com.alumm0x.util.SourceLoader;
-import com.alumm0x.util.ToolsUtil;
+import com.alumm0x.util.param.ParamHandlerImpl;
+import com.alumm0x.util.param.ParamKeyValue;
+import com.alumm0x.util.param.form.FormTools;
+import com.alumm0x.util.param.json.JsonTools;
 
+import burp.BurpExtender;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 public class XssStore extends VulTaskImpl {
+
+    // 记录存在请求参数的请求
+    public static List<HttpRequestResponseWithMarkers> note_request_hasParam = new ArrayList<>();
+    // 标记当前遍历的请求是否符合要求，每次遍历保存的请求都会初始化
+    boolean isFound;
+    // 用于验证请求2是否出现flag的条件
+    boolean check = false;
+    // 标记此次检测的编号
+    String uuid = UUID.randomUUID().toString().substring(0, 8);
 
     public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new XssStore(requestResponse);
@@ -42,11 +58,156 @@ public class XssStore extends VulTaskImpl {
      *          - 请求1跟请求2不一定是不一样的，也有可能是同一个请求，所以检测的时候不需要在意是否第二个请求，对原请求也进行响应检测
      * 3.人工确认：访问请求2的Referer的url，也就是页面rootUrl，然后查看页面源码是否包含xsspayload，再深度构造xsspayload进行验证    
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void run() {
-        
+        // 后缀检查，静态资源不做测试
+        List<String> add = new ArrayList<String>();
+        add.add(".js");
+        if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add)) { 
+            // 验证是否flag出现在请求响应体中
+            if (check) {
+                //新的请求包
+                okHttpRequester.send(BurpReqRespTools.getUrlWithOutQuery(requestResponse),
+                    BurpReqRespTools.getMethod(requestResponse),
+                    BurpReqRespTools.getReqHeaders(requestResponse),
+                    BurpReqRespTools.getQuery(requestResponse),
+                    new String(BurpReqRespTools.getReqBody(requestResponse)),
+                    BurpReqRespTools.getContentType(requestResponse),
+                    new XssStoreCallback(this));
+            } else {
+                // 检查请求中是否存在请求参数，包含query、body
+                if (BurpReqRespTools.getQuery(requestResponse) != null || BurpReqRespTools.getReqBody(requestResponse).length > 0) {
+                    // 存在请求参数，则保存请求
+                    note_request_hasParam.add(requestResponse);
+                }
+
+                // 需要是有响应body数据的请求才进入检查
+                if (BurpReqRespTools.getRespBody(requestResponse).length > 0) {
+                    // 遍历保存的请求
+                    // 1.找到请求1的用户输入，原样出现在请求2的响应中
+                    for (HttpRequestResponseWithMarkers nott_RequestResponseWithMarkers : note_request_hasParam) {
+                        // 标记当前遍历的请求是否符合要求，默认都是false
+                        isFound = false;
+                        String query = null;
+                        String req_body = null;
+                        // 查询参数
+                        if (BurpReqRespTools.getQueryMap(nott_RequestResponseWithMarkers).size() != 0) {
+                            FormTools tools = new FormTools();
+                            // 遍历保存的请求中的参数值，在当前请求响应中查找匹配
+                            tools.formHandler(BurpReqRespTools.getQueryMap(nott_RequestResponseWithMarkers), new ParamHandlerImpl() {
+                                @Override
+                                public List<ParamKeyValue> handler(Object key, Object value) {
+                                    List<ParamKeyValue> paramKeyValues = new ArrayList<>();
+                                    // 查找是否在当前请求响应中出现保存的请求的参数值
+                                    if (!"".equals(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), value.toString().getBytes()) != -1) {
+                                        isFound = true;
+                                        // 从响应中匹配到了请求参数值，记录一下找到的请求
+                                        MainPanel.logAdd(
+                                            nott_RequestResponseWithMarkers, 
+                                            BurpReqRespTools.getHost(nott_RequestResponseWithMarkers), 
+                                            BurpReqRespTools.getUrlPath(nott_RequestResponseWithMarkers),
+                                            BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers), 
+                                            BurpReqRespTools.getStatus(nott_RequestResponseWithMarkers), 
+                                            XssStore.class.getSimpleName(),
+                                            String.format("【%s】找到参数值出现在响应中的请求，Query参数：%s=%s", uuid, key, value), 
+                                            null);
+                                        // 在此请求中出现在响应体的参数添加flag，进行重放验证
+                                        paramKeyValues.add(new ParamKeyValue(key, "WebRisks-XssStore"));
+                                        return paramKeyValues;
+                                    }
+                                    paramKeyValues.add(new ParamKeyValue(key, value));
+                                    return paramKeyValues;
+                                }
+                            });
+                            // 记录修改后的查询参数
+                            query = tools.toString();
+                        }
+                        // 请求体参数
+                        if (new String(BurpReqRespTools.getReqBody(nott_RequestResponseWithMarkers)).startsWith("{")) { // Json对象
+                            JsonTools tools = new JsonTools();
+                            try {
+                                tools.jsonObjHandler(JsonTools.jsonObjectToMap(new String(BurpReqRespTools.getReqBody(requestResponse))), new ParamHandlerImpl() {
+                                    @Override
+                                    public List<ParamKeyValue> handler(Object key, Object value) {
+                                        List<ParamKeyValue> paramKeyValues = new ArrayList<>();
+                                        // 查找是否在当前请求响应中出现保存的请求的参数值
+                                        if (!"".equals(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), value.toString().getBytes()) != -1) {
+                                            isFound = true;
+                                            // 从响应中匹配到了请求参数值，记录一下找到的请求
+                                            MainPanel.logAdd(
+                                                nott_RequestResponseWithMarkers, 
+                                                BurpReqRespTools.getHost(nott_RequestResponseWithMarkers), 
+                                                BurpReqRespTools.getUrlPath(nott_RequestResponseWithMarkers),
+                                                BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers), 
+                                                BurpReqRespTools.getStatus(nott_RequestResponseWithMarkers), 
+                                                XssStore.class.getSimpleName(),
+                                                String.format("【%s】找到参数值出现在响应中的请求，Body参数：%s=%s", uuid, key, value), 
+                                                null);
+                                            // 在此请求中出现在响应体的参数添加flag，进行重放验证
+                                            paramKeyValues.add(new ParamKeyValue(key, "WebRisks-XssStore"));
+                                            return paramKeyValues;
+                                        }
+                                        paramKeyValues.add(new ParamKeyValue(key, value));
+                                        return paramKeyValues;
+                                    }
+                                });
+                                // 记录修改后的查询参数
+                                req_body = tools.toString();
+                            } catch (Exception e) {
+                                BurpExtender.callbacks.printError("[XssStore.run-Json] " + e.getMessage());
+                            }
+                        } else if (new String(BurpReqRespTools.getReqBody(nott_RequestResponseWithMarkers)).startsWith("[")) { // Json数组
+                            // Json数组的先不处理，常规设计都是Json对象为主，Json数组是嵌在Json对象里面使用的
+                        } else { // 其他数据类型，如form表单参数
+                            if (BurpReqRespTools.getFormBodyMap(nott_RequestResponseWithMarkers).size() != 0) {
+                                isFound = true;
+                                FormTools tools = new FormTools();
+                                // 遍历保存的请求中的参数值，在当前请求响应中查找匹配
+                                tools.formHandler(BurpReqRespTools.getFormBodyMap(nott_RequestResponseWithMarkers), new ParamHandlerImpl() {
+                                    @Override
+                                    public List<ParamKeyValue> handler(Object key, Object value) {
+                                        List<ParamKeyValue> paramKeyValues = new ArrayList<>();
+                                        // 查找是否在当前请求响应中出现保存的请求的参数值
+                                        if (!"".equals(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), value.toString().getBytes()) != -1) {
+                                            // 从响应中匹配到了请求参数值，记录一下找到的请求
+                                            MainPanel.logAdd(
+                                                nott_RequestResponseWithMarkers, 
+                                                BurpReqRespTools.getHost(nott_RequestResponseWithMarkers), 
+                                                BurpReqRespTools.getUrlPath(nott_RequestResponseWithMarkers),
+                                                BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers), 
+                                                BurpReqRespTools.getStatus(nott_RequestResponseWithMarkers), 
+                                                XssStore.class.getSimpleName(),
+                                                String.format("【%s】找到参数值出现在响应中的请求，Body参数：%s=%s", uuid, key, value), 
+                                                null);
+                                            // 在此请求中出现在响应体的参数添加flag，进行重放验证
+                                            paramKeyValues.add(new ParamKeyValue(key, "WebRisks-XssStore"));
+                                            return paramKeyValues;
+                                        }
+                                        paramKeyValues.add(new ParamKeyValue(key, value));
+                                        return paramKeyValues;
+                                    }
+                                });
+                                // 记录修改后的查询参数
+                                req_body = tools.toString();
+                            }
+                        }
+                        // 如果找到了，则进行重放验证
+                        if (isFound) {
+                            //新的请求包
+                            okHttpRequester.send(BurpReqRespTools.getUrlWithOutQuery(nott_RequestResponseWithMarkers),
+                                BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers),
+                                BurpReqRespTools.getReqHeaders(nott_RequestResponseWithMarkers),
+                                query,
+                                req_body,
+                                BurpReqRespTools.getContentType(nott_RequestResponseWithMarkers),
+                                new XssStoreCallback(this));
+                        }
+                    }
+                }   
+            }
+        }
     }
-    
 }
 
 class XssStoreCallback implements Callback {
@@ -54,9 +215,8 @@ class XssStoreCallback implements Callback {
     VulTaskImpl vulTask;
     String xssString = null;
 
-    public XssStoreCallback(VulTaskImpl vulTask, String xssString){
+    public XssStoreCallback(VulTaskImpl vulTask){
         this.vulTask = vulTask;
-        this.xssString = xssString;
     }
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -77,18 +237,20 @@ class XssStoreCallback implements Callback {
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
-        String ct = ToolsUtil.hasHeader(BurpReqRespTools.getRespHeaders(requestResponse), "Content-Type");
-        // 反射性仅存在于响应content-type是页面等会被浏览器渲染的资源，比如json响应是没有的，有也是dom型
-        if(ct != null && (
-            ct.contains("text/html") 
-            || ct.contains("application/xhtml+xml")
-            || ct.contains("application/x-www-form-urlencoded")
-            || ct.contains("image/svg+xml")
-            )){
-            //检查验证数据是否原样在响应中出现
-            if (new String(BurpReqRespTools.getRespBody(requestResponse)).contains(this.xssString)) {
-                message = "发现疑似反射型XSS（响应中检测到无编码处理的payload）";
+        if(response.isSuccessful()){
+            if (!((XssStore)vulTask).check) {
+                // 重放修改参数成功
+                message = String.format("【%s】参数注入flag的请求成功", ((XssStore)vulTask).uuid);
+                // 需要重新查看请求2中是否出现flag
+                ((XssStore)vulTask).check = true;
+                ((XssStore)vulTask).run();
+            } else if (HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), "WebRisks-XssStore".getBytes()) != -1) {
+                message = String.format("【%s】响应中发现flag，疑似存在存储型Xss", ((XssStore)vulTask).uuid);
             }
+        } else {
+            // 会存在请求失败
+            // 比如做了参数校验，无法提交成功
+            message = String.format("【%s】请求失败，无法进行后续的XssStore的验证，请求人工确认", ((XssStore)vulTask).uuid);
         }
         // 记录日志
         MainPanel.logAdd(
@@ -99,6 +261,6 @@ class XssStoreCallback implements Callback {
             BurpReqRespTools.getStatus(requestResponse), 
             XssStore.class.getSimpleName(),
             message, 
-            String.join("\n", SourceLoader.loadSources("/payloads/XssReflect.bbm")));
+            null);
     }
 }

@@ -460,6 +460,31 @@ public class BurpReqRespTools {
     }
 
     /**
+     * 获取请求的body参数,form表单的
+     * @param requestResponse  burp的IHttpRequestResponse
+     * @return Map<String, String>
+     */
+    public static Map<String, Object> getFormBodyMap(IHttpRequestResponse requestResponse){
+        Map<String, Object> bodyParams = new HashMap<>();
+        if (requestResponse != null) {
+            String body = new String(getReqBody(requestResponse));
+            if (body.length() != 0) { // getReqBody会返回空数组
+                String[] kv = body.split("&");
+                if (kv.length > 0) {
+                    for (String params : kv) {
+                        String[] keyvalue = params.split("=", 2);
+                        if (keyvalue.length == 2) {
+                            bodyParams.put(keyvalue[0].trim(), keyvalue[1].trim());
+                        }
+                    }
+                }
+                
+            }
+        }
+        return bodyParams;
+    }
+
+    /**
      * 获取请求的content-type
      * @param requestResponse  burp的IHttpRequestResponse
      * @return String

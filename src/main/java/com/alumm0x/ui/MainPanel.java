@@ -4,6 +4,7 @@ import com.alumm0x.engine.TaskManager;
 import com.alumm0x.engine.VulScanner;
 import com.alumm0x.listensers.HttpListener;
 import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
+import com.alumm0x.task.XssStore;
 import com.alumm0x.util.ClassNameGet;
 import com.alumm0x.util.CommonMess;
 
@@ -105,7 +106,7 @@ public class MainPanel {
 
         JButton btnClear = new JButton("ClearTable");
         btnClear.setPreferredSize(new Dimension(90,28)); // 按钮大小
-        btnClear.setToolTipText("清除数据，包含下表数据/请求队列/已测标记/请求缓存");
+        btnClear.setToolTipText("清除数据，包含下表数据/请求队列/已测标记/请求缓存/XssStore存储的有参数的请求");
         btnClear.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 MainPanel.ClearResult();
@@ -159,6 +160,8 @@ public class MainPanel {
                 VulScanner.schedule.setText( "0 / 0");
                 VulScanner.Over = 0;
                 BurpExtender.callbacks.printOutput("Clear all requests");
+                // 清空XssStore存储的有参数的请求
+                XssStore.note_request_hasParam.clear();
             }
         });
         panel.add(scanClear);
