@@ -84,7 +84,7 @@ public class XssStore extends VulTaskImpl {
                     note_request_hasParam.add(requestResponse);
                 }
 
-                // 需要是有响应body数据的请求才进入检查
+                // 需要是当前请求有响应body数据的请求才进入检查历史请求参数
                 if (BurpReqRespTools.getRespBody(requestResponse).length > 0) {
                     // 遍历保存的请求
                     // 1.找到请求1的用户输入，原样出现在请求2的响应中
@@ -245,7 +245,6 @@ public class XssStore extends VulTaskImpl {
 class XssStoreCallback implements Callback {
 
     VulTaskImpl vulTask;
-    String xssString = null;
 
     public XssStoreCallback(VulTaskImpl vulTask){
         this.vulTask = vulTask;
@@ -277,7 +276,7 @@ class XssStoreCallback implements Callback {
                 ((XssStore)vulTask).insertFlag = true; // 完成注入，标记一下，这样验证请求2的时候就不会再进入这里了，而是进入下面的esle进行验证响应中是否出现flag
                 ((XssStore)vulTask).check = true; // 进行验证，标记一下
                 ((XssStore)vulTask).run();
-            } else if ( ((XssStore)vulTask).check && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), "WebRisks-XssStore".getBytes()) != -1) {
+            } else if ( ((XssStore)vulTask).check && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), "WebRisks-XssStore".getBytes()) != -1) {
                 message = String.format("【%s】三步走-3 响应中发现注入的flag，疑似存在存储型Xss", ((XssStore)vulTask).uuid);
             }
         } else {

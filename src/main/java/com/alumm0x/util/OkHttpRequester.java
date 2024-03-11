@@ -6,6 +6,7 @@ import okhttp3.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class OkHttpRequester {
 
@@ -23,6 +24,8 @@ public class OkHttpRequester {
                 .followSslRedirects(false) //不跳转
                 .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.getX509TrustManager()) // 忽略https证书
                 .hostnameVerifier(SSLSocketClient.getHostnameVerifier()) // 忽略https证书
+                .connectTimeout(10, TimeUnit.SECONDS)   // 建立连接的超时时间
+                .readTimeout(10, TimeUnit.MINUTES)  // 建立连接后读取数据的超时时间
                 .build();
     }
 
