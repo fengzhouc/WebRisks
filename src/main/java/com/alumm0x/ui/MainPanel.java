@@ -106,7 +106,7 @@ public class MainPanel {
 
         JButton btnClear = new JButton("ClearTable");
         btnClear.setPreferredSize(new Dimension(90,28)); // 按钮大小
-        btnClear.setToolTipText("清除数据，包含下表数据/请求队列/已测标记/请求缓存/XssStore存储的有参数的请求");
+        btnClear.setToolTipText("清除数据，包含下表数据/请求队列/已测标记/请求缓存");
         btnClear.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 MainPanel.ClearResult();
@@ -153,7 +153,7 @@ public class MainPanel {
         panel.add(scanshow);
         JButton scanClear = new JButton("Clear");
         scanClear.setPreferredSize(new Dimension(70,28)); // 按钮大小
-        scanClear.setToolTipText("清除保存的request");
+        scanClear.setToolTipText("清除保存的request/XssStore存储的有参数的请求");
         scanClear.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 CommonMess.requests.clear(); //开启的时候清空
