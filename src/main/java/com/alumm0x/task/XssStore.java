@@ -70,7 +70,8 @@ public class XssStore extends VulTaskImpl {
             // 验证是否flag出现在请求响应体中
             if (check) {
                 //新的请求包
-                okHttpRequester.send(BurpReqRespTools.getUrlWithOutQuery(requestResponse),
+                okHttpRequester.send(
+                    BurpReqRespTools.getUrlWithOutQuery(requestResponse),
                     BurpReqRespTools.getMethod(requestResponse),
                     BurpReqRespTools.getReqHeaders(requestResponse),
                     BurpReqRespTools.getQuery(requestResponse),
@@ -200,7 +201,8 @@ public class XssStore extends VulTaskImpl {
                         // 如果找到了，则进行重放验证
                         if (isFound) {
                             //新的请求包
-                            okHttpRequester.send(BurpReqRespTools.getUrlWithOutQuery(nott_RequestResponseWithMarkers),
+                            okHttpRequester.send(
+                                BurpReqRespTools.getUrlWithOutQuery(nott_RequestResponseWithMarkers),
                                 BurpReqRespTools.getMethod(nott_RequestResponseWithMarkers),
                                 BurpReqRespTools.getReqHeaders(nott_RequestResponseWithMarkers),
                                 query,
