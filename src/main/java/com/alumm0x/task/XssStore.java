@@ -238,7 +238,7 @@ public class XssStore extends VulTaskImpl {
      * @param str
      * @return
      */
-    private boolean isNumeric(String str){  
+    public static boolean isNumeric(String str){  
         for (int i = str.length();--i>=0;){    
          if (!Character.isDigit(str.charAt(i))){  
           return false;  
