@@ -4,7 +4,7 @@ package com.alumm0x.util.param;
 import java.util.List;
 
 /**
- * 用于处理json数据的类，可以继承复写相关方法
+ * 用于处理数据的类，可以继承复写相关方法
  */
 public abstract class ParamHandlerImpl {
     /**

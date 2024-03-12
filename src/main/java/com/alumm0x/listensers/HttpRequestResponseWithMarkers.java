@@ -110,14 +110,21 @@ public class HttpRequestResponseWithMarkers implements IHttpRequestResponseWithM
 
     /**
      * 根据需要高亮的内容，在请求或响应中找到其位置
-     * @param outerArray
-     * @param smallerArray
-     * @return
+     * @param outerArray 目标数据数组
+     * @param smallerArray 待查找的数据数组
+     * @return -1 不存在，找到则返回首位index，末尾index = 首位index + smallerArray.length
      */
     public static int indexOf(byte[] outerArray, byte[] smallerArray) {
-        for(int i = 0; i < outerArray.length - smallerArray.length+1; ++i) {
+        // 先做一下判空，以及smallerArray长度必须小于或等于outerArray的长度
+        if (outerArray == null || smallerArray == null || smallerArray.length > outerArray.length) {
+            return -1;
+        }
+        // 遍历目标数组
+        for(int i = 0; i <= outerArray.length - smallerArray.length; ++i) {
             boolean found = true;
+            // 从目标数组的该元素开始匹配特征数组，如果都匹配了则返回
             for(int j = 0; j < smallerArray.length; ++j) {
+                // 发现一个不匹配的则匹配失败
                 if (outerArray[i+j] != smallerArray[j]) {
                     found = false;
                     break;

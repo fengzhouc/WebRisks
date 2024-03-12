@@ -80,8 +80,11 @@ public class XssStore extends VulTaskImpl {
             }  else {
                 // 检查请求中是否存在请求参数，包含query、body
                 if (BurpReqRespTools.getQuery(requestResponse) != null || BurpReqRespTools.getReqBody(requestResponse).length > 0) {
-                    // 存在请求参数，则保存请求
-                    note_request_hasParam.add(requestResponse);
+                    // 如果已经存在了就不添加了
+                    if (!note_request_hasParam.contains(requestResponse)) {
+                        // 存在请求参数，则保存请求
+                        note_request_hasParam.add(requestResponse);
+                    }
                 }
 
                 // 需要是当前请求有响应body数据的请求才进入检查历史请求参数
@@ -282,7 +285,7 @@ class XssStoreCallback implements Callback {
         } else {
             // 会存在请求失败
             // 比如做了参数校验，无法提交成功
-            message = String.format("【%s】重放失败 ，无法进行后续的XssStore的验证，请求人工确认", ((XssStore)vulTask).uuid);
+            message = String.format("【%s】三步走-2/3 重放失败 ，无法进行后续的XssStore的验证，请求人工确认", ((XssStore)vulTask).uuid);
         }
         // 记录日志
         MainPanel.logAdd(

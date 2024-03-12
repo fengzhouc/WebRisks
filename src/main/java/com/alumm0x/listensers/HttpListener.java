@@ -73,6 +73,8 @@ public class HttpListener implements IHttpListener, IMessageEditorController {
                 String md5 = new BigInteger(1, md.digest()).toString(16);
                 // 检查是否在缓存中
                 if (localCache.get(md5) == null) { //如果在缓存中则返回
+                    //存入缓存中
+                    localCache.put(md5, "in");
                     // 将请求放入队列
                     try {
                         // 使用自定义的IHttpRequestResponse，可在请求及响应中设置高亮数据
@@ -90,10 +92,8 @@ public class HttpListener implements IHttpListener, IMessageEditorController {
                     } catch (InterruptedException e) {
                         BurpExtender.callbacks.printError("reqQueue.put -> " + e.getMessage());
                     }
-                    //存入缓存中
-                    localCache.put(md5, "in");
                 }
-                BurpExtender.callbacks.printOutput("inCache " + url);
+                BurpExtender.callbacks.printOutput("inCache " + String.format("method_%s_url_%s_status_%d", BurpReqRespTools.getMethod(messageInfo), url, BurpReqRespTools.getStatus(messageInfo)));
             }
         }
     }
