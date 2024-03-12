@@ -2,7 +2,10 @@ package com.alumm0x.task.collect;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.alumm0x.impl.VulTaskImpl;
@@ -132,6 +135,7 @@ public class FindParamIsId extends VulTaskImpl {
                 // 主要覆盖响应返回json对象的情况
                 if (new String(BurpReqRespTools.getRespBody(requestResponse)).startsWith("{")) { // Json对象
                     JsonTools tools = new JsonTools();
+                    List<String> ids = new ArrayList<>();
                     try {
                         tools.jsonObjHandler(JsonTools.jsonObjectToMap(new String(BurpReqRespTools.getRespBody(requestResponse))), new ParamHandlerImpl() {
                             @Override
@@ -149,6 +153,8 @@ public class FindParamIsId extends VulTaskImpl {
                                         FindParamIsId.class.getSimpleName(),
                                         String.format("【%s】疑似Id作用的响应内容，RespBody字段：%s=%s", uuid, key, value), 
                                         null);
+                                    // 提取id数据,响应中可能会存在大量的id数据，提取出来可以用
+                                    ids.add(String.format("%s=%s", key, value));
                                 }
                                 paramKeyValues.add(new ParamKeyValue(key, value));
                                 return paramKeyValues;
@@ -157,7 +163,24 @@ public class FindParamIsId extends VulTaskImpl {
                     } catch (Exception e) {
                         BurpExtender.callbacks.printError("[FindParamIsId.run-Json] " + e.getMessage());
                     }
-                } 
+                    if (ids.size() > 0) {
+                        // 将List转换为Set，自动去除重复元素
+                        Set<String> set = new HashSet<>(ids);
+                        // 再次将Set转换为List，得到去重后的结果
+                        List<String> distinctNumbers = new ArrayList<>(set);
+                        // 排序
+                        Collections.sort(distinctNumbers);
+                        MainPanel.logAdd(
+                            requestResponse, 
+                            BurpReqRespTools.getHost(requestResponse), 
+                            BurpReqRespTools.getUrlPath(requestResponse),
+                            BurpReqRespTools.getMethod(requestResponse), 
+                            BurpReqRespTools.getStatus(requestResponse), 
+                            FindParamIsId.class.getSimpleName(),
+                            String.format("【%s】疑似Id作用的响应内容，已提取数据，详细请查看“Found & Fix”", uuid), 
+                            String.join("\n", distinctNumbers));
+                    }
+                }
             }
         }
     }
