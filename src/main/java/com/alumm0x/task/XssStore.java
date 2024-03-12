@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.alumm0x.impl.VulTaskImpl;
 import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
+import com.alumm0x.task.collect.FindParamIsId;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.param.ParamHandlerImpl;
@@ -105,8 +106,8 @@ public class XssStore extends VulTaskImpl {
                                 @Override
                                 public List<ParamKeyValue> handler(Object key, Object value) {
                                     List<ParamKeyValue> paramKeyValues = new ArrayList<>();
-                                    // 查找是否在当前请求响应中出现保存的请求的参数值
-                                    if (!"".equals(value.toString()) && !isWithe(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
+                                    // 查找是否在当前请求响应中出现保存的请求的参数值(排除空参数值、白名单值、id作用的参数)
+                                    if (!"".equals(value.toString()) && !isWithe(value.toString()) && !FindParamIsId.isParamId(key.toString(), value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
                                         isFound = true;
                                         // 从响应中匹配到了请求参数值，记录一下找到的请求
                                         MainPanel.logAdd(
@@ -137,8 +138,8 @@ public class XssStore extends VulTaskImpl {
                                     @Override
                                     public List<ParamKeyValue> handler(Object key, Object value) {
                                         List<ParamKeyValue> paramKeyValues = new ArrayList<>();
-                                        // 查找是否在当前请求响应中出现保存的请求的参数值
-                                        if (!"".equals(value.toString()) && !isWithe(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
+                                        // 查找是否在当前请求响应中出现保存的请求的参数值(排除空参数值、白名单值、id作用的参数)
+                                        if (!"".equals(value.toString()) && !isWithe(value.toString()) && !FindParamIsId.isParamId(key.toString(), value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
                                             isFound = true;
                                             // 从响应中匹配到了请求参数值，记录一下找到的请求
                                             MainPanel.logAdd(
@@ -174,8 +175,8 @@ public class XssStore extends VulTaskImpl {
                                     @Override
                                     public List<ParamKeyValue> handler(Object key, Object value) {
                                         List<ParamKeyValue> paramKeyValues = new ArrayList<>();
-                                        // 查找是否在当前请求响应中出现保存的请求的参数值
-                                        if (!"".equals(value.toString()) && !isWithe(value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
+                                        // 查找是否在当前请求响应中出现保存的请求的参数值(排除空参数值、白名单值、id作用的参数)
+                                        if (!"".equals(value.toString()) && !isWithe(value.toString()) && !FindParamIsId.isParamId(key.toString(), value.toString()) && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), value.toString().getBytes()) != -1) {
                                             // 从响应中匹配到了请求参数值，记录一下找到的请求
                                             MainPanel.logAdd(
                                                 requestResponse, 
@@ -277,6 +278,11 @@ class XssStoreCallback implements Callback {
             if (!((XssStore)vulTask).insertFlag) {
                 // 重放修改参数成功
                 message = String.format("【%s】三步走-2 历史请求参数注入flag，重放请求成功", ((XssStore)vulTask).uuid);
+                // 这里补充对响应进行特征检查，为什么呢？
+                // 因为有可能是同一个请求存在xss
+                if (HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getRespBody(requestResponse), "WebRisks-XssStore".getBytes()) != -1) {
+                    message = String.format("【%s】三步走-2.1 历史请求重放后响应中发现注入的flag，疑似存在存储型Xss", ((XssStore)vulTask).uuid);
+                }
                 // 需要重新查看请求2中是否出现flag
                 ((XssStore)vulTask).insertFlag = true; // 完成注入，标记一下，这样验证请求2的时候就不会再进入这里了，而是进入下面的esle进行验证响应中是否出现flag
                 ((XssStore)vulTask).check = true; // 进行验证，标记一下
