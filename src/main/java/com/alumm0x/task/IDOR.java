@@ -46,7 +46,8 @@ public class IDOR extends VulTaskImpl {
                     BurpReqRespTools.getReqHeaders(requestResponse)) {
                 //删除cookie/authorization头部
                 String key = header.split(":")[0];
-                if (HeaderTools.isAuth(key.toLowerCase(Locale.ROOT))) {
+                if (HeaderTools.isAuth(key.toLowerCase(Locale.ROOT)) // 排除标准认证的头部
+                    && !HeaderTools.inNormal(key.toLowerCase(Locale.ROOT))) { // 排除非标准的认证头部
                     hasCookie = true;
                 }else {
                     new_headers.add(header);
