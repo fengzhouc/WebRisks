@@ -46,7 +46,7 @@ public class UploadSecure extends VulTaskImpl {
                     String fileOrigin = matcher.group(1);
                     // 修改为别的域名
                     String req_body = request_body_str.replace(fileOrigin, fileName);
-                    //新的请求包
+                    //新的请求包，验证任意文件上传
                     okHttpRequester.send(
                             BurpReqRespTools.getUrlWithOutQuery(requestResponse), 
                             BurpReqRespTools.getMethod(requestResponse), 
@@ -55,7 +55,7 @@ public class UploadSecure extends VulTaskImpl {
                             req_body, 
                             BurpReqRespTools.getContentType(requestResponse), 
                             new UploadSecureCallback(this));
-                    //2.修改content-type
+                    //2.修改content-type，再尝试修改Content-Type
                     String regex1 = "Content-Type:\\s(.*?)\\s"; //分组获取文件名
                     Pattern pattern1 = Pattern.compile(regex1);
                     Matcher matcher1 = pattern1.matcher(request_body_str);

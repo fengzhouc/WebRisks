@@ -70,7 +70,8 @@ class FindSensitiveApiCallback implements Callback {
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
-        if (response.code() != 404){
+        if (response.code() != 404 
+            && response.code() != 400){
             // 状态码不存在则认为存在该API
             message = "根据urlBanner匹配到相关cve的url";
         }

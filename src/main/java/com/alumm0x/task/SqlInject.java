@@ -74,31 +74,23 @@ public class SqlInject extends VulTaskImpl {
             //如果有body参数，需要多body参数进行测试
             String request_body_str = new String(BurpReqRespTools.getReqBody(requestResponse));
             if (request_body_str.length() > 0){
-                String contentYtpe = ToolsUtil.hasHeader(BurpReqRespTools.getReqHeaders(requestResponse), "Content-type");
-                String contentype = "";
-                if (contentYtpe.contains("application/json")){
-                    contentype = "json";
-                }else if (contentYtpe.contains("application/x-www-form-urlencoded")){
-                    contentype = "form";
+                String req_body = null;
+                if (request_body_str.startsWith("{")){
+                    req_body = JsonTools.createJsonBody(request_body_str, injectJsonStr);
+                }else if (request_body_str.contains("&")){
+                    req_body = JsonTools.createFormBody(request_body_str, injectStr);
                 }
-                String req_body = request_body_str;
-                switch (contentype){
-                    case "json":
-                        req_body = JsonTools.createJsonBody(request_body_str, injectJsonStr);
-                        break;
-                    case "form":
-                        req_body = JsonTools.createFormBody(request_body_str, injectStr);
-                        break;
+                if (req_body != null) {
+                    //新的请求包
+                    okHttpRequester.send(
+                        BurpReqRespTools.getUrlWithOutQuery(requestResponse), 
+                        BurpReqRespTools.getMethod(requestResponse), 
+                        BurpReqRespTools.getReqHeaders(requestResponse), 
+                        BurpReqRespTools.getQuery(requestResponse), 
+                        req_body, 
+                        BurpReqRespTools.getContentType(requestResponse), 
+                        new SqlInjectCallback(this));   
                 }
-                //新的请求包
-                okHttpRequester.send(
-                    BurpReqRespTools.getUrlWithOutQuery(requestResponse), 
-                    BurpReqRespTools.getMethod(requestResponse), 
-                    BurpReqRespTools.getReqHeaders(requestResponse), 
-                    BurpReqRespTools.getQuery(requestResponse), 
-                    req_body, 
-                    BurpReqRespTools.getContentType(requestResponse), 
-                    new SqlInjectCallback(this));
             }
         }
     }
@@ -160,21 +152,20 @@ class SqlInjectCallback implements Callback {
                             String form = BurpExtender.helpers.urlEncode(entry.getKey());
                             String json = BurpExtender.helpers.urlEncode(entry.getValue());
                             // 不存在爆破信息，则尝试下布尔型，如果跟源响应一致，则不存在问题
-                            SqlInject sqlInject = (SqlInject) SqlInject.getInstance(vulTask.requestResponse);
-                            sqlInject.setInjectStr(form);
-                            sqlInject.setInjectJsonStr(json);
-                            sqlInject.isDeep = true; // 避免死循环
-                            sqlInject.start();
+                            ((SqlInject)vulTask).setInjectStr(form);
+                            ((SqlInject)vulTask).setInjectJsonStr(json);
+                            ((SqlInject)vulTask).isDeep = true; // 避免死循环
+                            ((SqlInject)vulTask).run();
                         }
                     }
                 }
-            }else {
-                // 布尔检测的预期是响应跟源请求是不一样的，走到这条分支，已经是前面那个条件判断响应与源响应一样了，所以大概率是存在风险的
-                message = "SqlInject Boolean";
+            } else {
+                // 布尔检测的预期是响应跟源请求是一样的，走到这条分支
+                // 布尔false的异常数据都响应一样的话，是啥情况呢？
+                // 1.统一的返回数据，不好检测了
+                // 2.大概率跟数据库无关了
+                // message = "重放前后的状态码及响应体都不一样";
             }
-            // 布尔false的异常数据都响应一样的话，是啥情况呢？
-            // 1.统一的返回数据，不好检测了
-            // 2.大概率跟数据库无关了
         }
         // 记录日志
         MainPanel.logAdd(

@@ -34,14 +34,15 @@ public class Ssrf extends VulTaskImpl {
     }
     private Ssrf(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
-        this.entry =MainPanel.logAdd(
+        this.entry = new LogEntry(
+                        MainPanel.log.size(),
                         requestResponse, 
                         BurpReqRespTools.getHost(requestResponse), 
                         BurpReqRespTools.getUrlPath(requestResponse),
                         BurpReqRespTools.getMethod(requestResponse), 
                         BurpReqRespTools.getStatus(requestResponse), 
                         Ssrf.class.getSimpleName(),
-                        "Ssrf Checking", 
+                        null, 
                         String.join("\n", SourceLoader.loadSources("/payloads/SsrfRegex.bbm")));
     }
 
@@ -150,8 +151,6 @@ class SsrfCallback implements Callback {
                     entry.Risk += i;
                 }
             }
-            // 更新table中的数据
-            refreshEntry(requestResponse);
         } else {
             // 检查响应中是否存在flag
             if (new String(BurpReqRespTools.getRespBody(requestResponse)).contains("evil6666.com")) {
@@ -163,6 +162,10 @@ class SsrfCallback implements Callback {
                 tryDnslog();
             }
         }
+        // 更新table中的数据
+        refreshEntry(requestResponse);
+        // 添加到logtable
+        MainPanel.logAdd(entry);
     }
         
     /**

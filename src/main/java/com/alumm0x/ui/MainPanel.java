@@ -525,4 +525,39 @@ public class MainPanel {
         }
         return entry;
     }
+
+    // 添加面板展示数据
+    // 已经在列表的不添加
+    // 添加synchronized防止多线程竞态
+    public static synchronized LogEntry logAdd(LogEntry entry) {
+        // debug模式则记录所有
+        if (DEBUG) {
+            try {
+            log.add(entry);
+            } catch (Exception e) {
+                BurpExtender.callbacks.printError("[Debug] MainPanel.logAdd " + e.getMessage());
+            }
+            //通知数据可能变更，刷新全表格数据，该用okhttp异步发包后，没办法同步调用fireTableRowsInserted通知刷新数据，因为一直row=lastRow
+            MainPanel.logTable.refreshTable();
+        } else if (entry.Risk != null && !entry.Risk.equals("onFailure") && !entry.Risk.equals("")) { // 非debug模式仅记录有风险的，及risk不为空
+            boolean inside = false;
+            for (LogEntry le :
+                    log) {
+                if (le.Host.equalsIgnoreCase(entry.Host)
+                        && le.Path.equalsIgnoreCase(entry.Path)
+                        && le.Method.equalsIgnoreCase(entry.Method)
+                    //    && le.Status.equals(status)
+                        && le.Risk.equalsIgnoreCase(entry.Risk)) {
+                    inside = true;
+                    break;
+                }
+            }
+            if (!inside) {
+                log.add(entry);
+                //通知数据可能变更，刷新全表格数据，该用okhttp异步发包后，没办法同步调用fireTableRowsInserted通知刷新数据，因为一直row=lastRow
+                MainPanel.logTable.refreshTable();
+            }
+        }
+        return entry;
+    }
 }
