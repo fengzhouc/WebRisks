@@ -94,7 +94,9 @@ class MethodFuckCallback implements Callback {
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         // 常规同一个请求支持多种请求方式的话，一定会存在请求参数的差异
         // 请求参数不符合要求是会请求失败的
-        if (!response.isSuccessful()) {
+        if (!response.isSuccessful()
+            && BurpReqRespTools.getStatus(requestResponse) != 404 // 404 则不存在请求方式的接口
+            && BurpReqRespTools.getStatus(requestResponse) / 10 == 50) { // 500 则服务器错误，即没有对应的处理类
             message = String.format("【%s】发现同一接口存在多请求方式，OriginMethod=%s", ((MethodFuck)vulTask).uuid, BurpReqRespTools.getMethod(vulTask.requestResponse));
         }
         // 记录日志
