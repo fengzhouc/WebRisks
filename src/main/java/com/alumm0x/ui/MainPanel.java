@@ -256,13 +256,13 @@ public class MainPanel {
         id.setResizable(false);
         TableColumn host = cm.getColumn(1);
         host.setCellRenderer(render);
-        host.setPreferredWidth(300);
-        host.setMaxWidth(200);
+        host.setPreferredWidth(200);
+        host.setMaxWidth(300);
         host.setMinWidth(50);
         TableColumn path = cm.getColumn(2);
         // path.setCellRenderer(render);F
         path.setPreferredWidth(300);
-        path.setMaxWidth(300);
+        path.setMaxWidth(500);
         path.setMinWidth(50);
         TableColumn method = cm.getColumn(3);
         method.setCellRenderer(render);
