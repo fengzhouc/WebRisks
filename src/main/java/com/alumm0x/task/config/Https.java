@@ -35,28 +35,39 @@ public class Https extends VulTaskImpl {
         add.add(".js");
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add)){
             String protocol = BurpReqRespTools.getProtocol(requestResponse);
-            if (protocol.toLowerCase(Locale.ROOT).startsWith("https")){
+            if (protocol.toLowerCase(Locale.ROOT).equalsIgnoreCase("https")){
                 message.add("use https");
-            }
-            // 检查是否同时开启http/https
-            List<String> new_headers = new ArrayList<>();
-            for (String header :
-                    BurpReqRespTools.getReqHeaders(requestResponse)) {
-                if (!header.contains("Host")){
-                    new_headers.add(header);
+                // 检查是否同时开启http/https
+                List<String> new_headers = new ArrayList<>();
+                for (String header :
+                        BurpReqRespTools.getReqHeaders(requestResponse)) {
+                    if (!header.contains("Host")){
+                        new_headers.add(header);
+                    }
                 }
+                new_headers.add("Host: " + BurpReqRespTools.getHost(requestResponse) + ":80");
+                String url = "http://" + BurpReqRespTools.getHost(requestResponse) + BurpReqRespTools.getUrlPath(requestResponse);
+                // 检测80端口
+                okHttpRequester.send(
+                    url, 
+                    BurpReqRespTools.getMethod(requestResponse), 
+                    new_headers, 
+                    BurpReqRespTools.getQuery(requestResponse), 
+                    new String(BurpReqRespTools.getReqBody(requestResponse)), 
+                    BurpReqRespTools.getContentType(requestResponse), 
+                    new HttpsCallback(this));
+            } else if (protocol.toLowerCase(Locale.ROOT).equalsIgnoreCase("http")) {
+                // 记录日志
+                MainPanel.logAdd(
+                    requestResponse, 
+                    BurpReqRespTools.getHost(requestResponse), 
+                    BurpReqRespTools.getUrlPath(requestResponse),
+                    BurpReqRespTools.getMethod(requestResponse), 
+                    BurpReqRespTools.getStatus(requestResponse), 
+                    Https.class.getSimpleName(),
+                    "use http", 
+                    null);
             }
-            new_headers.add("Host: " + BurpReqRespTools.getHost(requestResponse) + ":80");
-            String url = "http://" + BurpReqRespTools.getHost(requestResponse) + BurpReqRespTools.getUrlPath(requestResponse);
-            // 检测80端口
-            okHttpRequester.send(
-                url, 
-                BurpReqRespTools.getMethod(requestResponse), 
-                new_headers, 
-                BurpReqRespTools.getQuery(requestResponse), 
-                new String(BurpReqRespTools.getReqBody(requestResponse)), 
-                BurpReqRespTools.getContentType(requestResponse), 
-                new HttpsCallback(this));
             TaskManager.vulsChecked.add(String.format("burp.task.api.Https_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
         }
     }
