@@ -204,6 +204,7 @@ public class MainPanel {
         });
         panel_c.add(btnFilter_c);
         CookieText = new JTextArea();
+        CookieText.setLineWrap(true); // 超过长度换行显示
         CookieText.setRows(2);
         CookieText.setColumns(50);
         CookieText.setText("Cookie: xxx");
