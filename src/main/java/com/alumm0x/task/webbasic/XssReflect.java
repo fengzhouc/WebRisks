@@ -1,4 +1,4 @@
-package com.alumm0x.task;
+package com.alumm0x.task.webbasic;
 
 import burp.*;
 import okhttp3.Call;

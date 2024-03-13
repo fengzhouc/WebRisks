@@ -24,6 +24,7 @@ public class MyItemListener implements ItemListener {
         need.add("XssStore");
         need.add("Fuzz");
         need.add("Cve");
+        need.add("BypassWaf");
     }
 
     public void itemStateChanged(ItemEvent e) {
@@ -62,6 +63,16 @@ public class MyItemListener implements ItemListener {
             }else if (key.equalsIgnoreCase("Cve")){
                 // Cve漏洞的检测类
                 for (String task : ClassNameGet.getClazzName("com.alumm0x.task.cves", true)) {
+                    TaskManager.tasks.add(task);
+                }
+            }else if (key.equalsIgnoreCase("Fuzz")){
+                // Cve漏洞的检测类
+                for (String task : ClassNameGet.getClazzName("com.alumm0x.task.fuzz", true)) {
+                    TaskManager.tasks.add(task);
+                }
+            }else if (key.equalsIgnoreCase("BypassWaf")){
+                // Cve漏洞的检测类
+                for (String task : ClassNameGet.getClazzName("com.alumm0x.task.bypasswaf", true)) {
                     TaskManager.tasks.add(task);
                 }
             }else if (key.equalsIgnoreCase("SessionInvalid")) {
@@ -135,6 +146,16 @@ public class MyItemListener implements ItemListener {
             }else if (key.equalsIgnoreCase("Cve")){
                 // Cve漏洞的检测类
                 for (String task : ClassNameGet.getClazzName("com.alumm0x.task.cves", false)) {
+                    TaskManager.tasks.remove(task);
+                }
+            }else if (key.equalsIgnoreCase("Fuzz")){
+                // Cve漏洞的检测类
+                for (String task : ClassNameGet.getClazzName("com.alumm0x.task.fuzz", true)) {
+                    TaskManager.tasks.remove(task);
+                }
+            }else if (key.equalsIgnoreCase("BypassWaf")){
+                // Cve漏洞的检测类
+                for (String task : ClassNameGet.getClazzName("com.alumm0x.task.bypasswaf", true)) {
                     TaskManager.tasks.remove(task);
                 }
             }else if (key.equalsIgnoreCase("IDOR")) {

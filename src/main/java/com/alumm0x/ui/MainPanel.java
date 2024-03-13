@@ -357,7 +357,9 @@ public class MainPanel {
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("Cve",options,gbaglayout,constraints, myItemListener).setToolTipText("Cve漏洞的检测");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
-        makeButton("Fuzz",options,gbaglayout,constraints, myItemListener).setToolTipText("模糊测试，大量数据进行探索");
+        makeButton("Fuzz",options,gbaglayout,constraints, myItemListener).setToolTipText("模糊测试，对请求参数逐个进行大量数据进行探索");
+        constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
+        makeButton("BypassWaf",options,gbaglayout,constraints, myItemListener).setToolTipText("尝试绕过WAF");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         List<String> clazzs = ClassNameGet.getClazzName("com.alumm0x.task", false);
         Collections.sort(clazzs); // 重新排序

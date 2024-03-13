@@ -1,4 +1,4 @@
-package com.alumm0x.task;
+package com.alumm0x.task.collect;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -85,7 +85,7 @@ class MethodFuckCallback implements Callback {
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (BurpReqRespTools.getStatus(requestResponse) == 200
                 || BurpReqRespTools.getStatus(requestResponse) == 302) {
-            message = "发现同一接口存在多请求方式，OriginMethod" + BurpReqRespTools.getMethod(vulTask.requestResponse);
+            message = "发现同一接口存在多请求方式，OriginMethod=" + BurpReqRespTools.getMethod(vulTask.requestResponse);
         }
         // 记录日志
         MainPanel.logAdd(

@@ -143,16 +143,6 @@ public class FindParamIsId extends VulTaskImpl {
                                 List<ParamKeyValue> paramKeyValues = new ArrayList<>();
                                 // 查看是否疑似ID的参数
                                 if (value != null && isParamId(key.toString(), value.toString())) {
-                                    // 从响应中匹配到了请求参数值，记录一下找到的请求
-                                    MainPanel.logAdd(
-                                        requestResponse, 
-                                        BurpReqRespTools.getHost(requestResponse), 
-                                        BurpReqRespTools.getUrlPath(requestResponse),
-                                        BurpReqRespTools.getMethod(requestResponse), 
-                                        BurpReqRespTools.getStatus(requestResponse), 
-                                        FindParamIsId.class.getSimpleName(),
-                                        String.format("【%s】疑似Id作用的响应内容，RespBody字段：%s=%s", uuid, key, value), 
-                                        null);
                                     // 提取id数据,响应中可能会存在大量的id数据，提取出来可以用
                                     ids.add(String.format("%s=%s", key, value));
                                 }

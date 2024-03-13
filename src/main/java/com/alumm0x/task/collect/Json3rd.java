@@ -1,4 +1,4 @@
-package com.alumm0x.task;
+package com.alumm0x.task.collect;
 
 import okhttp3.Call;
 import okhttp3.Callback;
