@@ -95,7 +95,7 @@ class MethodFuckCallback implements Callback {
         // 常规同一个请求支持多种请求方式的话，一定会存在请求参数的差异
         // 请求参数不符合要求是会请求失败的
         if (!response.isSuccessful()) {
-            message = String.join("【%s】发现同一接口存在多请求方式，OriginMethod=%s", ((MethodFuck)vulTask).uuid, BurpReqRespTools.getMethod(vulTask.requestResponse));
+            message = String.format("【%s】发现同一接口存在多请求方式，OriginMethod=%s", ((MethodFuck)vulTask).uuid, BurpReqRespTools.getMethod(vulTask.requestResponse));
         }
         // 记录日志
         MainPanel.logAdd(
