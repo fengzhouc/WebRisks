@@ -351,9 +351,9 @@ public class MainPanel {
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("Config",options,gbaglayout,constraints, myItemListener).setToolTipText("安全配置检查，包含：Cors配置、Https开启、Cookie安全属性、安全响应头、前端源代码编译配置");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
-        makeButton("Collect",options,gbaglayout,constraints, myItemListener).setToolTipText("信息收集的Task，包含：JWT包含敏感信息、微信SeesionKey、个人敏感信息(身份证、手机号、邮箱)、DomXss的可疑函数、xml数据提交");
+        makeButton("Collect",options,gbaglayout,constraints, myItemListener).setToolTipText("信息收集的Task，包含：JWT包含敏感信息、微信SeesionKey、个人敏感信息(身份证、手机号、邮箱)、DomXss的可疑函数、ID作用的数据、Json库识别");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
-        makeButton("WebBasic",options,gbaglayout,constraints, myItemListener).setToolTipText("基础web漏洞检测，包含：目录浏览");
+        makeButton("WebBasic",options,gbaglayout,constraints, myItemListener).setToolTipText("基础web漏洞检测，包含：目录浏览、任意文件上传、反射型Xss");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("Cve",options,gbaglayout,constraints, myItemListener).setToolTipText("Cve漏洞的检测");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
