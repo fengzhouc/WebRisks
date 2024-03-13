@@ -28,8 +28,8 @@ public class BurpExtender implements IBurpExtender, ITab, IExtensionStateListene
 
         //加载插件输出默认信息
         String author = "alumm0x";
-        callbacks.printOutput("#Author: "+author);
-        callbacks.printOutput("#Github: https://github.com/fengzhouc/burp_plugins");
+        callbacks.printOutput("# Author: "+author);
+        callbacks.printOutput("# Github: https://github.com/fengzhouc/WebRisks");
 
         callbacks.registerExtensionStateListener(this);
         //注册监听器
