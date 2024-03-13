@@ -197,6 +197,7 @@ public class MainPanel {
                 if (null != cookieTextString) {
                     for (String cookie : cookieTextString.split("\n")) {
                         cookies.add(cookie);
+                        BurpExtender.callbacks.printOutput("Set Cookie: " + cookie);
                     }
                 }
             }

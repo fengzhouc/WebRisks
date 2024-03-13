@@ -25,6 +25,7 @@ public class MyItemListener implements ItemListener {
         need.add("Fuzz");
         need.add("Cve");
         need.add("BypassWaf");
+        need.add("IDOR_xy");
     }
 
     public void itemStateChanged(ItemEvent e) {

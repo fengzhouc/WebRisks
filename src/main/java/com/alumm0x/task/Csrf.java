@@ -41,7 +41,8 @@ public class Csrf extends VulTaskImpl {
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add)){
             //cors会利用浏览器的cookie自动发送机制，如果不是使用cookie做会话管理就没这个问题了
             if (ToolsUtil.hasHeader(BurpReqRespTools.getReqHeaders(requestResponse), "Cookie") != null 
-                && BurpReqRespTools.getReqBody(requestResponse).length > 0){
+                && BurpReqRespTools.getReqBody(requestResponse).length > 0
+                && !BurpReqRespTools.getMethod(requestResponse).equalsIgnoreCase("get")){ // 排除掉get请求，get请求一般不需要
                 // 不检测content-type，因为有些人开发不规范，没有设置，或者乱设置
                 // String ct = ToolsUtil.hasHeader(BurpReqRespTools.getReqHeaders(requestResponse), "Content-Type");
                 // if (ct != null && ct.contains("application/x-www-form-urlencoded")){

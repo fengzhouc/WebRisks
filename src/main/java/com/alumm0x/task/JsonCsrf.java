@@ -42,7 +42,8 @@ public class JsonCsrf extends VulTaskImpl {
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add)){
             //csrf会利用浏览器的cookie自动发送机制，如果不是使用cookie做会话管理就没这个问题了
             if (ToolsUtil.hasHeader(BurpReqRespTools.getReqHeaders(requestResponse), "Cookie") != null
-                && BurpReqRespTools.getReqBody(requestResponse).length > 0){ // 有请求体
+                && BurpReqRespTools.getReqBody(requestResponse).length > 0 // 有请求体
+                && HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), "{".getBytes()) != -1){  // json数据结构
                 /*
                  * 1、请求头包含application/json
                  */

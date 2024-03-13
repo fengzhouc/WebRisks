@@ -30,8 +30,9 @@ public class BypassAuthXFF extends VulTaskImpl {
         /**
          * 绕过xff绕过本地限制
          */
-        //条件：403禁止访问的才需要测试
-        if (BurpReqRespTools.getStatus(requestResponse) == 403){
+        //条件：401、403禁止访问的才需要测试
+        int status = BurpReqRespTools.getStatus(requestResponse);
+        if (status == 401 || status == 403){
             // 后缀检查，静态资源不做测试
             List<String> add = new ArrayList<String>();
             add.add(".js");

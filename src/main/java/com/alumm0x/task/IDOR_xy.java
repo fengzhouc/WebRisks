@@ -49,7 +49,7 @@ public class IDOR_xy extends VulTaskImpl {
                         String[] auth = cookie.split(":");
                         String key = auth[0];
                         String value = auth[1];
-                        if (header.toLowerCase(Locale.ROOT).startsWith(key.toLowerCase(Locale.ROOT))) {
+                        if (header.trim().toLowerCase(Locale.ROOT).startsWith(key.trim().toLowerCase(Locale.ROOT))) {
                             header = key + ":" + value;
                             break;
                         }

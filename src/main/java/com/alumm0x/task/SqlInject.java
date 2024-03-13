@@ -11,7 +11,6 @@ import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
 import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.SourceLoader;
-import com.alumm0x.util.ToolsUtil;
 import com.alumm0x.util.param.json.JsonTools;
 
 import java.io.IOException;
