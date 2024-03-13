@@ -100,7 +100,7 @@ class IDORxyCallback implements Callback {
             //如果状态码相同则可能存在问题
             if (BurpReqRespTools.getStatus(requestResponse) == BurpReqRespTools.getStatus(vulTask.requestResponse)
                     && Arrays.equals(BurpReqRespTools.getRespBody(requestResponse),BurpReqRespTools.getRespBody(vulTask.requestResponse))) {
-                message = "发现横向越权，即替换会话凭证仍可以请求成功";
+                message = "发现横向越权，替换会话凭证仍可以请求成功，且响应内容相同";
             }
         }
         // 记录日志
