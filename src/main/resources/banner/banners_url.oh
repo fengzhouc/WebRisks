@@ -1,6 +1,5 @@
 /path?class.module.classLoader.URLs%5B0%5D=0,springcore-CVE-2022-22965
 /invoker/JMXInvokerServlet,JBoss-JMXInvokerServlet(CVE-2015-7501)
-/?filename=sample.sh%22%3B&contents=%23!%2Fbin%2Fbash%0Aid,Spring-MVC_RFD(CVE-2020-5398)
 /sys/ui/extend/varkind/custom.jsp,蓝凌oa任意文件读取(https://www.cnvd.org.cn/flaw/show/CNVD-2021-28277)
 /data/sys-common/treexml.tmpl,蓝凌oa treecxml.templ命令执行
 /api/v1/terminal/sessions/,JumpServer Session 未授权访问漏洞(CVE-2023-42442)
