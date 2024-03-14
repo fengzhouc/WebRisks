@@ -30,14 +30,6 @@ import java.util.List;
  *
  */
 public class SpringBootActuator extends VulTaskImpl {
-    private static final List<String> SPRINGBOOT_ACTUATOR_PATHS = Arrays.asList(
-            "/health",
-            "/manager/health",
-            "/actuator",
-            "/actuator/jolokia/list",
-            "/jolokia/list",
-            "/env"
-    );
 
     public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new SpringBootActuator(requestResponse);
@@ -54,8 +46,8 @@ public class SpringBootActuator extends VulTaskImpl {
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add)){
             // 构造url
             for (String api :
-                    SPRINGBOOT_ACTUATOR_PATHS) {
-                String url = String.format("%s%s", BurpReqRespTools.getRootUrl(requestResponse), api);
+                    SourceLoader.loadSources("/payloads/SpringBootActuator.bbm")) {
+                String url = String.format("%s/%s", BurpReqRespTools.getRootUrl(requestResponse), api);
                 okHttpRequester.send(
                     url, 
                     "GET", 
