@@ -424,7 +424,10 @@ public class MainPanel {
         HttpListener.localCache.clear(); //清空时清空缓存
         TaskManager.reqQueue.clear(); //清空待检的请求队列
         // 清空请求响应tab
-        currentlyDisplayedItem = null;
+        MainPanel.requestViewer.setMessage(new byte[]{}, true);
+        MainPanel.responseViewer.setMessage(new byte[]{}, false);
+        MainPanel.currentlyDisplayedItem = null;
+        MainPanel.desViewer.setMessage(new byte[]{}, false);
         BurpExtender.callbacks.printOutput("clear cache success.");
     }
 
