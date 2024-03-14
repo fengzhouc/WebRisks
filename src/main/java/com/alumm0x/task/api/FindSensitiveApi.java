@@ -39,7 +39,7 @@ public class FindSensitiveApi extends VulTaskImpl {
                 null, 
                 null, 
                 BurpReqRespTools.getContentType(requestResponse), 
-                new FindSensitiveApiCallback(this));
+                new FindSensitiveApiCallback(this, banner[1]));
         }
         TaskManager.vulsChecked.add(String.format("burp.task.api.FindSensitiveApi_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
     }
@@ -47,9 +47,11 @@ public class FindSensitiveApi extends VulTaskImpl {
 
 class FindSensitiveApiCallback implements Callback {
     VulTaskImpl vulTask;
+    String tip;
 
-    public FindSensitiveApiCallback(VulTaskImpl vulTask){
+    public FindSensitiveApiCallback(VulTaskImpl vulTask, String tip){
         this.vulTask = vulTask;
+        this.tip = tip;
     }
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -73,7 +75,7 @@ class FindSensitiveApiCallback implements Callback {
         if (response.code() != 404 
             && response.code() != 400){
             // 状态码不存在则认为存在该API
-            message = "根据urlBanner匹配到相关cve的url";
+            message = this.tip;
         }
         // 记录日志
         MainPanel.logAdd(

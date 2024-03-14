@@ -29,20 +29,20 @@ public class XmlMaybe extends VulTaskImpl {
         List<String> add = new ArrayList<String>();
         add.add(".js");
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), new ArrayList<>())){
-            List<String> message = new ArrayList<>();
+            String message = null;
             String request_body_str = new String(BurpReqRespTools.getReqBody(requestResponse));
             if (request_body_str.length() > 0){
                 //contenttype是xml的
                 String ct = ToolsUtil.hasHeader(BurpReqRespTools.getReqHeaders(requestResponse), "content-type");
                 if ( ct != null && ct.contains("application/xml")) {
-                    message.add("使用xml请求体，尝试下xml注入呢");
+                    message = "使用xml请求体，尝试下xml注入呢";
                 }else if (ToolsUtil.hasHeader(BurpReqRespTools.getReqHeaders(requestResponse), "multipart/form-data") != null){//上传xml文件
                     if (request_body_str.contains("application/xml")){
-                        message.add("上传xml文件");
+                        message = "上传xml文件，尝试下xml注入呢";
                     }
                 }
             }
-            if (message.size() != 0) {
+            if (message != null) {
                 //不需要发包,上面正则匹配到则存在问题
                 // 记录日志
                 MainPanel.logAdd(
@@ -52,7 +52,7 @@ public class XmlMaybe extends VulTaskImpl {
                     BurpReqRespTools.getMethod(requestResponse), 
                     BurpReqRespTools.getStatus(requestResponse), 
                     XmlMaybe.class.getSimpleName(),
-                    String.join(",", message), 
+                    message, 
                     null);
             }
         }

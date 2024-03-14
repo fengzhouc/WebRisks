@@ -3,3 +3,5 @@
 /sys/ui/extend/varkind/custom.jsp,蓝凌oa任意文件读取(https://www.cnvd.org.cn/flaw/show/CNVD-2021-28277)
 /data/sys-common/treexml.tmpl,蓝凌oa treecxml.templ命令执行
 /api/v1/terminal/sessions/,JumpServer Session 未授权访问漏洞(CVE-2023-42442)
+.git,git泄漏
+robots.txt,robots.txt泄漏

@@ -70,9 +70,8 @@ public class JWTSensitiveMessage extends VulTaskImpl {
                 }
             }
             // 检查json数据
-            if (BurpReqRespTools.getContentType(requestResponse).contains("application/json")
-                    && BurpReqRespTools.getReqBody(requestResponse).length > 0
-                    && new String(BurpReqRespTools.getReqBody(requestResponse)).startsWith("{")){
+            if (BurpReqRespTools.getReqBody(requestResponse).length > 0
+                && new String(BurpReqRespTools.getReqBody(requestResponse)).startsWith("{")){
                 JsonTools tools = new JsonTools();
                 try {
                     tools.jsonObjHandler(JsonTools.jsonObjectToMap(new String(BurpReqRespTools.getReqBody(requestResponse))), new ParamHandlerImpl() {
