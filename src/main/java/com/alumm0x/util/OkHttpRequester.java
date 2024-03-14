@@ -69,6 +69,16 @@ public class OkHttpRequester {
         }
     }
 
+    /**
+     * 发送请求，根据body实际长度更行ContentLength
+     * @param url
+     * @param method
+     * @param headerList
+     * @param query
+     * @param bodyParam
+     * @param contentType
+     * @param callback
+     */
     public void defSend(String url, String method, List<String> headerList, String query, String bodyParam, String contentType, Callback callback){
         MediaType content_Type = MediaType.parse(contentType);
         RequestBody body = RequestBody.Companion.create(bodyParam, content_Type);
@@ -83,6 +93,30 @@ public class OkHttpRequester {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //返回响应
+        assert request != null;
+        Call call = this.client.newCall(request);
+        call.enqueue(callback);
+    }
+
+    /**
+     * 不根据body设置contentlent，而是根据headerList中的contentlength的去发送
+     * @param url
+     * @param method
+     * @param headerList
+     * @param query
+     * @param bodyParam
+     * @param contentType
+     * @param callback
+     */
+    public void SendSetContentLength(String url, String method, List<String> headerList, String query, String bodyParam, String contentType, Callback callback){
+        MediaType content_Type = MediaType.parse(contentType);
+        RequestBody body = RequestBody.Companion.create(bodyParam, content_Type);
+        Request request = new Request.Builder()
+                            .url(url)
+                            .method(method, body)
+                            .headers(SetHeaders(headerList))
+                            .build();
         //返回响应
         assert request != null;
         Call call = this.client.newCall(request);

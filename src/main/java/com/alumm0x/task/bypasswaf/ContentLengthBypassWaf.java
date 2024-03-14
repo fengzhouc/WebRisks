@@ -13,16 +13,19 @@ import com.alumm0x.util.BurpReqRespTools;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class BigDataBypassWaf extends VulTaskImpl {
+public class ContentLengthBypassWaf extends VulTaskImpl {
     /*
-     * 如果HTTP请求POST BODY太大，检测所有的内容，WAF集群消耗太大的CPU、内存资源。因此许多WAF只检测前面的几K字节、1M、或2M。对于攻击者而然，只需要在POST BODY前面添加许多无用数据，把攻击payload放在最后即可绕过WAF检测
+     * 利用ContentLength
+     * 有些中间件会根据Contentlength进行请求解析，会抛弃掉超过contentlength的数据
+     * 根据架构，waf一般会在最前面，也就是会在nginx这类中间件的前面，所以payload的后面添加无关的数据用于混淆，然后如果中间件存在解析问题出现截断的情况，则真正的payload就会流到controller
      */
 
     public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
-        return new BigDataBypassWaf(requestResponse);
+        return new ContentLengthBypassWaf(requestResponse);
     }
-    private BigDataBypassWaf(HttpRequestResponseWithMarkers requestResponse) {
+    private ContentLengthBypassWaf(HttpRequestResponseWithMarkers requestResponse) {
         super(requestResponse);
     }
 
@@ -32,37 +35,40 @@ public class BigDataBypassWaf extends VulTaskImpl {
         List<String> add = new ArrayList<String>();
         add.add(".js");
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add) && BurpReqRespTools.getReqBody(requestResponse).length > 0){
-            String reqBody = null;
+            String reqBody = new String(BurpReqRespTools.getReqBody(requestResponse));
             String str = "qqwertyuiolasdfghjklzxcvbnmsdfasdfasdvasdvasqqwertyuiolasdfghjklzxcvbnmsdfasdfasdvasdvasqqwertyuiolasdfghjklzxcvbnmsdfasdfasdvasdvas";
             // 递增长度到1024
-            while (str.length() < 1024) {
+            while (str.length() < 256) {
                 str += str;
             }
-            // body前面添加超大数据,有两种数据类型
-            if (HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), "{".getBytes()) != -1) {
-                reqBody = String.format("{\"key\"=\"%s\",%s", str , new String(BurpReqRespTools.getReqBody(requestResponse)).substring(1));
-            } else if (HttpRequestResponseWithMarkers.indexOf(BurpReqRespTools.getReqBody(requestResponse), "&".getBytes()) != -1) {
-                
-                reqBody = String.format("key=%s&%s",str, new String(BurpReqRespTools.getReqBody(requestResponse)));
+            List<String> new_headers = new ArrayList<String>();
+            //新请求设置length
+            for (String header :
+                    BurpReqRespTools.getReqHeaders(requestResponse)) {
+                // 剔除掉Transfer-Encoding头部
+                if (!header.toLowerCase(Locale.ROOT).startsWith("Content-Length".toLowerCase(Locale.ROOT))) {
+                    new_headers.add(header);
+                }
             }
-
-            okHttpRequester.send(
+            // 设置攻击payload的长度
+            new_headers.add(String.format("Content-Length:", reqBody.length()));
+            okHttpRequester.SendSetContentLength(
                 BurpReqRespTools.getUrlWithOutQuery(requestResponse), 
                 BurpReqRespTools.getMethod(requestResponse), 
                 BurpReqRespTools.getReqHeaders(requestResponse), 
                 BurpReqRespTools.getQuery(requestResponse), 
-                reqBody, 
+                reqBody + str,  // 末尾追加额外的无用数据去混淆，不一定能成功，因为前面payload可能还是会存在攻击特征
                 BurpReqRespTools.getContentType(requestResponse), 
-                new BigDataBypassWafCallback(this));
+                new ContentLengthBypassWafCallback(this));
         }
     }
 }
 
-class BigDataBypassWafCallback implements Callback {
+class ContentLengthBypassWafCallback implements Callback {
 
     VulTaskImpl vulTask;
 
-    public BigDataBypassWafCallback(VulTaskImpl vulTask){
+    public ContentLengthBypassWafCallback(VulTaskImpl vulTask){
         this.vulTask = vulTask;
     }
     @Override
@@ -75,9 +81,9 @@ class BigDataBypassWafCallback implements Callback {
             BurpReqRespTools.getUrlPath(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
-            BigDataBypassWaf.class.getSimpleName(),
+            ContentLengthBypassWaf.class.getSimpleName(),
             "onFailure", 
-            "[BigDataBypassWafCallback-onFailure] " + e.getMessage());
+            "[ContentLengthBypassWafCallback-onFailure] " + e.getMessage());
     }
 
     @Override
@@ -85,7 +91,7 @@ class BigDataBypassWafCallback implements Callback {
         String message = null;
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.isSuccessful()){
-            message = "确认下是否使用使用超大Body传输超过Waf阈值，导致BypassWaf？";
+            message = "确认下是否因为ContentLength截断BypassWaf？";
         }
         // 记录日志
         MainPanel.logAdd(
@@ -94,7 +100,7 @@ class BigDataBypassWafCallback implements Callback {
             BurpReqRespTools.getUrlPath(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
-            BigDataBypassWaf.class.getSimpleName(),
+            ContentLengthBypassWaf.class.getSimpleName(),
             message, 
             null);
     }

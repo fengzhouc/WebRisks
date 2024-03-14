@@ -98,5 +98,4 @@ public class TaskManager extends Thread {
 }
 
 // TODO https://github.com/ilmila/J2EEScan.git 漏洞检测加入
-// TODO 请求走私检测 https://xz.aliyun.com/t/6299
 // TODO 缓存投毒

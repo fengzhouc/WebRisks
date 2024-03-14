@@ -13,6 +13,7 @@ import com.alumm0x.util.BurpReqRespTools;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ChunkedBypassWaf extends VulTaskImpl {
     /*
@@ -39,13 +40,23 @@ public class ChunkedBypassWaf extends VulTaskImpl {
         add.add(".js");
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add) && BurpReqRespTools.getReqBody(requestResponse).length > 0){
             StringBuilder reqBody = new StringBuilder();
+            List<String> new_headers = new ArrayList<String>();
+            //新请求增加Transfer-Encoding
+            for (String header :
+                    BurpReqRespTools.getReqHeaders(requestResponse)) {
+                // 剔除掉Transfer-Encoding头部
+                if (!header.toLowerCase(Locale.ROOT).startsWith("Transfer-Encoding".toLowerCase(Locale.ROOT))) {
+                    new_headers.add(header);
+                }
+            }
+            new_headers.add("Transfer-Encoding:chunked");
             // 将数据进行分块格式化
             String req = new String(BurpReqRespTools.getReqBody(requestResponse));
             // 全部按长度1
             for (int i = 0; i < req.length(); ++i){    
                 reqBody.append(String.format("1\r\n%s\r\n", req.charAt(i))); 
             } 
-            reqBody.append("\r\n"); // 标记结束
+            reqBody.append("0\r\n\r\n"); // 标记结束
             okHttpRequester.send(
                 BurpReqRespTools.getUrlWithOutQuery(requestResponse), 
                 BurpReqRespTools.getMethod(requestResponse), 
@@ -75,9 +86,9 @@ class ChunkedBypassWafCallback implements Callback {
             BurpReqRespTools.getUrlPath(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
-            BigDataBypassWaf.class.getSimpleName(),
+            ChunkedBypassWaf.class.getSimpleName(),
             "onFailure", 
-            "[SwaggerApiCallback-onFailure] " + e.getMessage());
+            "[ChunkedBypassWafCallback-onFailure] " + e.getMessage());
     }
 
     @Override
@@ -85,7 +96,7 @@ class ChunkedBypassWafCallback implements Callback {
         String message = null;
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
         if (response.isSuccessful()){
-            message = "BypassWaf 成功";
+            message = "确认下是否使用Http分块传输成功BypassWaf？";
         }
         // 记录日志
         MainPanel.logAdd(
@@ -94,7 +105,7 @@ class ChunkedBypassWafCallback implements Callback {
             BurpReqRespTools.getUrlPath(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
-            BigDataBypassWaf.class.getSimpleName(),
+            ChunkedBypassWaf.class.getSimpleName(),
             message, 
             null);
     }
