@@ -76,7 +76,7 @@ public class CommandParamMaybe extends VulTaskImpl {
                     BurpReqRespTools.getUrlPath(requestResponse),
                     BurpReqRespTools.getMethod(requestResponse), 
                     BurpReqRespTools.getStatus(requestResponse), 
-                    XmlMaybe.class.getSimpleName(),
+                    CommandParamMaybe.class.getSimpleName(),
                     String.join(",", message), 
                     null);
             }

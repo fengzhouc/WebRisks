@@ -5,3 +5,4 @@
 /api/v1/terminal/sessions/,JumpServer Session 未授权访问漏洞(CVE-2023-42442)
 .git,git泄漏
 robots.txt,robots.txt泄漏
+metrics,常规运维采集信息传输的接口

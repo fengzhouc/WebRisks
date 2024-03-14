@@ -357,7 +357,7 @@ public class MainPanel {
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("WebBasic",options,gbaglayout,constraints, myItemListener).setToolTipText("基础web漏洞检测，包含：目录浏览、任意文件上传、反射型Xss");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
-        makeButton("Cve",options,gbaglayout,constraints, myItemListener).setToolTipText("Cve漏洞的检测");
+        makeButton("Cve",options,gbaglayout,constraints, myItemListener).setToolTipText("Cve漏洞的检测，建议选择单个进行repeater进行测试");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("Fuzz",options,gbaglayout,constraints, myItemListener).setToolTipText("模糊测试，对请求参数逐个进行大量数据进行探索");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
