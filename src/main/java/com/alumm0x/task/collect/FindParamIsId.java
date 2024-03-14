@@ -172,6 +172,22 @@ public class FindParamIsId extends VulTaskImpl {
                     }
                 }
             }
+            // path参数
+            if (!BurpReqRespTools.getUrlPath(requestResponse).equalsIgnoreCase("/")) {
+                for (String path : BurpReqRespTools.getUrlPath(requestResponse).split("/")) {
+                    if (isParamId(null, path)) {
+                        MainPanel.logAdd(
+                            requestResponse, 
+                            BurpReqRespTools.getHost(requestResponse), 
+                            BurpReqRespTools.getUrlPath(requestResponse),
+                            BurpReqRespTools.getMethod(requestResponse), 
+                            BurpReqRespTools.getStatus(requestResponse), 
+                            FindParamIsId.class.getSimpleName(),
+                            String.format("【%s】疑似Id作用的UrlPath参数，UrlPath参数：%s", uuid, path), 
+                            null);
+                    }
+                }
+            }
         }
     }
 
@@ -183,11 +199,11 @@ public class FindParamIsId extends VulTaskImpl {
      */
     public static boolean isParamId(String key, String value) {
         // 1. 参数名带有id字样的结尾，常见都是Id结尾
-        if (key.toLowerCase().endsWith("id")) {
+        if (key != null && key.toLowerCase().endsWith("id")) {
             return true;
-        } else if (isUUID(value)) {  // 2. 判断参数值是否uuid
+        } else if (value != null && isUUID(value)) {  // 2. 判断参数值是否uuid
             return true;
-        } else if (XssStore.isNumeric(value) && value.length() > 6 && !isTimesmap(value)) {
+        } else if (value != null && XssStore.isNumeric(value) && value.length() > 6 && !isTimesmap(value)) {
             // 3. 纯数字的情况 (包含了雪花算法ID的情况),注意，这里排除了时间戳的情况
             //  value.length() > 6 排除掉页码的情况
             //  !isTimesmap(value) 排除掉时间戳的情况
