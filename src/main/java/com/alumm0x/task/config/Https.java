@@ -98,7 +98,8 @@ class HttpsCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
-        if (response.isSuccessful()){
+        if (response.isSuccessful()
+            && BurpReqRespTools.getProtocol(requestResponse).equalsIgnoreCase("http")){
             ((Https)vulTask).message.add("open http");
         }
         // 记录日志
