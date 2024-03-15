@@ -95,6 +95,7 @@ class MethodFuckCallback implements Callback {
         // 常规同一个请求支持多种请求方式的话，一定会存在请求参数的差异
         // 请求参数不符合要求是会请求失败的
         if (!response.isSuccessful()
+        && BurpReqRespTools.getStatus(requestResponse) != 400 
             && BurpReqRespTools.getStatus(requestResponse) != 404 // 404 则不存在请求方式的接口
             && BurpReqRespTools.getStatus(requestResponse) / 10 != 50 // 500 则服务器错误，即没有对应的处理类
             && BurpReqRespTools.getStatus(requestResponse) != 405) { // 405 表示不支持该方法
