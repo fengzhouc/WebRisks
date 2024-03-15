@@ -357,7 +357,7 @@ public class MainPanel {
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("WebBasic",options,gbaglayout,constraints, myItemListener).setToolTipText("基础web漏洞检测，包含：目录浏览、任意文件上传、反射型Xss");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
-        makeButton("Cve",options,gbaglayout,constraints, myItemListener).setToolTipText("Cve漏洞的检测，建议选择单个进行repeater进行测试");
+        makeButton("Cve",options,gbaglayout,constraints, myItemListener).setToolTipText("Cve漏洞的检测");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
         makeButton("Fuzz",options,gbaglayout,constraints, myItemListener).setToolTipText("模糊测试，对请求参数逐个进行大量数据进行探索");
         constraints.gridwidth = GridBagConstraints.REMAINDER;    //结束行
@@ -455,34 +455,20 @@ public class MainPanel {
             String path = analyzeRequest.getUrl().getPath();
             String method = analyzeRequest.getMethod();
             short status = analyzeResponse.getStatusCode();
-            boolean inside = false; // 标记是否已添加在列表中
-            int row = log.size();
-            // 重复的不显示
-            for (LogEntry le :
-                    log) {
-                if (le.Host.equalsIgnoreCase(host)
-                        && le.Path.equalsIgnoreCase(path)
-                        && le.Method.equalsIgnoreCase(method)
-                        && le.Status == status) {
-                    inside = true;
-                    break;
-                }
-            }
-            if (!inside) {
-                log.add(new LogEntry(
-                    row, 
-                    new HttpRequestResponseWithMarkers(messageInfo),
-                    host, 
-                    path, 
-                    method, 
-                    status, 
-                    "", 
-                    "", 
-                    ""));
-                //通知数据可能变更，刷新全表格数据，该用okhttp异步发包后，没办法同步调用fireTableRowsInserted通知刷新数据，因为一直row=lastRow
-                MainPanel.logTable.refreshTable();
-            }
 
+            int row = log.size();
+            log.add(new LogEntry(
+                row, 
+                new HttpRequestResponseWithMarkers(messageInfo),
+                host, 
+                path, 
+                method, 
+                status, 
+                "", 
+                "", 
+                ""));
+            //通知数据可能变更，刷新全表格数据，该用okhttp异步发包后，没办法同步调用fireTableRowsInserted通知刷新数据，因为一直row=lastRow
+            MainPanel.logTable.refreshTable();
         }
         //通知表格数据变更了
         logTable.refreshTable();
@@ -510,23 +496,9 @@ public class MainPanel {
             //通知数据可能变更，刷新全表格数据，该用okhttp异步发包后，没办法同步调用fireTableRowsInserted通知刷新数据，因为一直row=lastRow
             MainPanel.logTable.refreshTable();
         } else if (risk != null && !risk.equals("onFailure") && !risk.equals("")) { // 非debug模式仅记录有风险的，及risk不为空
-            boolean inside = false;
-            for (LogEntry le :
-                    log) {
-                if (le.Host.equalsIgnoreCase(host)
-                        && le.Path.equalsIgnoreCase(path)
-                        && le.Method.equalsIgnoreCase(method)
-                    //    && le.Status.equals(status)
-                        && le.Risk.equalsIgnoreCase(risk)) {
-                    inside = true;
-                    break;
-                }
-            }
-            if (!inside) {
-                log.add(entry);
-                //通知数据可能变更，刷新全表格数据，该用okhttp异步发包后，没办法同步调用fireTableRowsInserted通知刷新数据，因为一直row=lastRow
-                MainPanel.logTable.refreshTable();
-            }
+            log.add(entry);
+            //通知数据可能变更，刷新全表格数据，该用okhttp异步发包后，没办法同步调用fireTableRowsInserted通知刷新数据，因为一直row=lastRow
+            MainPanel.logTable.refreshTable();
         }
         return entry;
     }

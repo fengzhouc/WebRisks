@@ -60,7 +60,7 @@ class LandrayOaCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             LandrayOa.class.getSimpleName(),
@@ -83,7 +83,7 @@ class LandrayOaCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             LandrayOa.class.getSimpleName(),

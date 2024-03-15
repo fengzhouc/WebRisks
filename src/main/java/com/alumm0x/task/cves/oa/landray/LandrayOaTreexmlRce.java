@@ -88,7 +88,7 @@ class LandrayOaTreexmlRceCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             LandrayOaTreexmlRce.class.getSimpleName(),
@@ -111,7 +111,7 @@ class LandrayOaTreexmlRceCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             LandrayOaTreexmlRce.class.getSimpleName(),

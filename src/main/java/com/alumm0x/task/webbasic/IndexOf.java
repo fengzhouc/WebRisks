@@ -34,7 +34,7 @@ public class IndexOf extends VulTaskImpl {
                 MainPanel.logAdd(
                     requestResponse, 
                     BurpReqRespTools.getHost(requestResponse), 
-                    BurpReqRespTools.getUrlPath(requestResponse),
+                    BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                     BurpReqRespTools.getMethod(requestResponse), 
                     BurpReqRespTools.getStatus(requestResponse), 
                     IndexOf.class.getSimpleName(),
@@ -78,7 +78,7 @@ class IndexOfCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             IndexOf.class.getSimpleName(),

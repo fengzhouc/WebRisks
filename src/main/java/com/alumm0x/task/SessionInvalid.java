@@ -72,7 +72,7 @@ class SessionInvalidCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             SessionInvalid.class.getSimpleName(),
@@ -95,7 +95,7 @@ class SessionInvalidCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             SessionInvalid.class.getSimpleName(),

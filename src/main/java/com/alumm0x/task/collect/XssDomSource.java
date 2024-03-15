@@ -67,7 +67,7 @@ public class XssDomSource extends VulTaskImpl {
             MainPanel.logAdd(
                 requestResponse, 
                 BurpReqRespTools.getHost(requestResponse), 
-                BurpReqRespTools.getUrlPath(requestResponse),
+                BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                 BurpReqRespTools.getMethod(requestResponse), 
                 BurpReqRespTools.getStatus(requestResponse), 
                 XssDomSource.class.getSimpleName(),

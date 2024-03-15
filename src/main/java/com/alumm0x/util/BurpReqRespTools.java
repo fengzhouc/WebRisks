@@ -425,6 +425,20 @@ public class BurpReqRespTools {
     }
 
     /**
+     * 获取请求的url的path，待查询参数的
+     * @param requestResponse  burp的IHttpRequestResponse
+     * @return String
+     */
+    public static String getUrlPathWithQuery(IHttpRequestResponse requestResponse){
+        if (requestResponse != null) {
+            IRequestInfo requestInfo = BurpExtender.helpers.analyzeRequest(requestResponse);
+            String query = getQuery(requestResponse);
+            return query != null && !"".equals(query) ? requestInfo.getUrl().getPath() + "?" + query : requestInfo.getUrl().getPath();
+        }
+        return "";
+    }
+
+    /**
      * 获取请求的查询参数
      * @param requestResponse  burp的IHttpRequestResponse
      * @return String

@@ -52,7 +52,7 @@ public class Cors extends VulTaskImpl {
                         MainPanel.logAdd(
                             requestResponse, 
                             BurpReqRespTools.getHost(requestResponse), 
-                            BurpReqRespTools.getUrlPath(requestResponse),
+                            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                             BurpReqRespTools.getMethod(requestResponse), 
                             BurpReqRespTools.getStatus(requestResponse), 
                             Cors.class.getSimpleName(),
@@ -101,7 +101,7 @@ class CorsCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             Cors.class.getSimpleName(),
@@ -119,7 +119,7 @@ class CorsCallback implements Callback {
         MainPanel.logAdd(
                 requestResponse, 
                 BurpReqRespTools.getHost(requestResponse), 
-                BurpReqRespTools.getUrlPath(requestResponse),
+                BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                 BurpReqRespTools.getMethod(requestResponse), 
                 BurpReqRespTools.getStatus(requestResponse), 
                 Cors.class.getSimpleName(),

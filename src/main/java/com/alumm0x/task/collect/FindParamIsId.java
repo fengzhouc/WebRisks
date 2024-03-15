@@ -60,7 +60,7 @@ public class FindParamIsId extends VulTaskImpl {
                                 MainPanel.logAdd(
                                     requestResponse, 
                                     BurpReqRespTools.getHost(requestResponse), 
-                                    BurpReqRespTools.getUrlPath(requestResponse),
+                                    BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                                     BurpReqRespTools.getMethod(requestResponse), 
                                     BurpReqRespTools.getStatus(requestResponse), 
                                     FindParamIsId.class.getSimpleName(),
@@ -86,7 +86,7 @@ public class FindParamIsId extends VulTaskImpl {
                                     MainPanel.logAdd(
                                         requestResponse, 
                                         BurpReqRespTools.getHost(requestResponse), 
-                                        BurpReqRespTools.getUrlPath(requestResponse),
+                                        BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                                         BurpReqRespTools.getMethod(requestResponse), 
                                         BurpReqRespTools.getStatus(requestResponse), 
                                         FindParamIsId.class.getSimpleName(),
@@ -116,7 +116,7 @@ public class FindParamIsId extends VulTaskImpl {
                                     MainPanel.logAdd(
                                         requestResponse, 
                                         BurpReqRespTools.getHost(requestResponse), 
-                                        BurpReqRespTools.getUrlPath(requestResponse),
+                                        BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                                         BurpReqRespTools.getMethod(requestResponse), 
                                         BurpReqRespTools.getStatus(requestResponse), 
                                         FindParamIsId.class.getSimpleName(),
@@ -163,7 +163,7 @@ public class FindParamIsId extends VulTaskImpl {
                         MainPanel.logAdd(
                             requestResponse, 
                             BurpReqRespTools.getHost(requestResponse), 
-                            BurpReqRespTools.getUrlPath(requestResponse),
+                            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                             BurpReqRespTools.getMethod(requestResponse), 
                             BurpReqRespTools.getStatus(requestResponse), 
                             FindParamIsId.class.getSimpleName(),
@@ -179,7 +179,7 @@ public class FindParamIsId extends VulTaskImpl {
                         MainPanel.logAdd(
                             requestResponse, 
                             BurpReqRespTools.getHost(requestResponse), 
-                            BurpReqRespTools.getUrlPath(requestResponse),
+                            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                             BurpReqRespTools.getMethod(requestResponse), 
                             BurpReqRespTools.getStatus(requestResponse), 
                             FindParamIsId.class.getSimpleName(),

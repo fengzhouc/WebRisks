@@ -61,7 +61,7 @@ public class Https extends VulTaskImpl {
                 MainPanel.logAdd(
                     requestResponse, 
                     BurpReqRespTools.getHost(requestResponse), 
-                    BurpReqRespTools.getUrlPath(requestResponse),
+                    BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                     BurpReqRespTools.getMethod(requestResponse), 
                     BurpReqRespTools.getStatus(requestResponse), 
                     Https.class.getSimpleName(),
@@ -87,7 +87,7 @@ class HttpsCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             Https.class.getSimpleName(),
@@ -107,7 +107,7 @@ class HttpsCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             Https.class.getSimpleName(),

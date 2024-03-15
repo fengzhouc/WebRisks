@@ -52,7 +52,7 @@ public class SecureCookie extends VulTaskImpl {
             MainPanel.logAdd(
                 requestResponse, 
                 BurpReqRespTools.getHost(requestResponse), 
-                BurpReqRespTools.getUrlPath(requestResponse),
+                BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                 BurpReqRespTools.getMethod(requestResponse), 
                 BurpReqRespTools.getStatus(requestResponse), 
                 SecureCookie.class.getSimpleName(),

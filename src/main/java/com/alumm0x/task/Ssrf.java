@@ -38,7 +38,7 @@ public class Ssrf extends VulTaskImpl {
                         MainPanel.log.size(),
                         requestResponse, 
                         BurpReqRespTools.getHost(requestResponse), 
-                        BurpReqRespTools.getUrlPath(requestResponse),
+                        BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                         BurpReqRespTools.getMethod(requestResponse), 
                         BurpReqRespTools.getStatus(requestResponse), 
                         Ssrf.class.getSimpleName(),
@@ -126,7 +126,7 @@ class SsrfCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             Ssrf.class.getSimpleName(),

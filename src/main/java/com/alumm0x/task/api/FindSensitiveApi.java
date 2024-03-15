@@ -60,7 +60,7 @@ class FindSensitiveApiCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             FindSensitiveApi.class.getSimpleName(),
@@ -72,8 +72,9 @@ class FindSensitiveApiCallback implements Callback {
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         String message = null;
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
-        if (response.code() != 404 
-            && response.code() != 400){
+        if (response.code() != 404 // 排除不存在
+            && response.code() != 400 // 排除客户端错误
+            && response.code() / 10 != 50){ // 排除50x服务端错误
             // 状态码不存在则认为存在该API
             message = this.tip;
         }
@@ -81,7 +82,7 @@ class FindSensitiveApiCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             FindSensitiveApi.class.getSimpleName(),

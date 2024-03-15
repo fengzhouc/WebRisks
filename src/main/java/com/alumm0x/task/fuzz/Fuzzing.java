@@ -21,8 +21,10 @@ package com.alumm0x.task.fuzz;
  *   - 延时payload检测，有些payload是延时效果的，CallBack需要包含此类研判方式
  * 难点：这里主要难在于CallBack的兼容实现，以及如果知道此次payload是属于哪种
  * 
- * 参考如下
+ * 参考资料：
+ * https://www.anquanke.com/post/id/282840
  * https://mp.weixin.qq.com/s?__biz=Mzg3NDcwMDk3OA==&mid=2247484068&idx=1&sn=89ea1b1be48a0cb7f93a4750765719d1&chksm=cecd8b79f9ba026f7fbf52771e41272d684fc3af5175587f768082f8dbaee12d6d33bb892ceb&scene=21#wechat_redirect
+ * https://github.com/s0duku/ProxyFuzzer
  */
 public class Fuzzing {
     

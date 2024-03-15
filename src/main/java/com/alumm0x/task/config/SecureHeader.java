@@ -55,7 +55,7 @@ public class SecureHeader extends VulTaskImpl {
                 MainPanel.logAdd(
                     requestResponse, 
                     BurpReqRespTools.getHost(requestResponse), 
-                    BurpReqRespTools.getUrlPath(requestResponse),
+                    BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                     BurpReqRespTools.getMethod(requestResponse), 
                     BurpReqRespTools.getStatus(requestResponse), 
                     SecureHeader.class.getSimpleName(),

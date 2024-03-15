@@ -25,7 +25,7 @@ public class SourceMap extends VulTaskImpl {
                 MainPanel.logAdd(
                     requestResponse, 
                     BurpReqRespTools.getHost(requestResponse), 
-                    BurpReqRespTools.getUrlPath(requestResponse),
+                    BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                     BurpReqRespTools.getMethod(requestResponse), 
                     BurpReqRespTools.getStatus(requestResponse), 
                     SourceMap.class.getSimpleName(),

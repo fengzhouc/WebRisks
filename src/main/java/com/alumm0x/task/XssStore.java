@@ -113,7 +113,7 @@ public class XssStore extends VulTaskImpl {
                                         MainPanel.logAdd(
                                             requestResponse, 
                                             BurpReqRespTools.getHost(requestResponse), 
-                                            BurpReqRespTools.getUrlPath(requestResponse),
+                                            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                                             BurpReqRespTools.getMethod(requestResponse), 
                                             BurpReqRespTools.getStatus(requestResponse), 
                                             XssStore.class.getSimpleName(),
@@ -145,7 +145,7 @@ public class XssStore extends VulTaskImpl {
                                             MainPanel.logAdd(
                                                 requestResponse, 
                                                 BurpReqRespTools.getHost(requestResponse), 
-                                                BurpReqRespTools.getUrlPath(requestResponse),
+                                                BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                                                 BurpReqRespTools.getMethod(requestResponse), 
                                                 BurpReqRespTools.getStatus(requestResponse), 
                                                 XssStore.class.getSimpleName(),
@@ -181,7 +181,7 @@ public class XssStore extends VulTaskImpl {
                                             MainPanel.logAdd(
                                                 requestResponse, 
                                                 BurpReqRespTools.getHost(requestResponse), 
-                                                BurpReqRespTools.getUrlPath(requestResponse),
+                                                BurpReqRespTools.getUrlPathWithQuery(requestResponse),
                                                 BurpReqRespTools.getMethod(requestResponse), 
                                                 BurpReqRespTools.getStatus(requestResponse), 
                                                 XssStore.class.getSimpleName(),
@@ -262,7 +262,7 @@ class XssStoreCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             XssStore.class.getSimpleName(),
@@ -299,7 +299,7 @@ class XssStoreCallback implements Callback {
         MainPanel.logAdd(
             requestResponse, 
             BurpReqRespTools.getHost(requestResponse), 
-            BurpReqRespTools.getUrlPath(requestResponse),
+            BurpReqRespTools.getUrlPathWithQuery(requestResponse),
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             XssStore.class.getSimpleName(),
