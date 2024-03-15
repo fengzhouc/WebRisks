@@ -69,7 +69,7 @@ public class MyItemListener implements ItemListener {
                 }
             }else if (key.equalsIgnoreCase("Fuzz")){
                 // Cve漏洞的检测类
-                for (String task : ClassNameGet.getClazzName("com.alumm0x.task.fuzz", true)) {
+                for (String task : ClassNameGet.getClazzName("com.alumm0x.task.fuzz", false)) {
                     TaskManager.tasks.add(task);
                 }
             }else if (key.equalsIgnoreCase("BypassWaf")){
