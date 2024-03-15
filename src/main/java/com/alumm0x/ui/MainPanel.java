@@ -10,10 +10,7 @@ import com.alumm0x.util.ClassNameGet;
 import com.alumm0x.util.CommonMess;
 
 import burp.BurpExtender;
-import burp.IHttpService;
 import burp.IMessageEditor;
-import burp.IRequestInfo;
-import burp.IResponseInfo;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
