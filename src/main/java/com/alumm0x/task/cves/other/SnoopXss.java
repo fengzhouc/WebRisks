@@ -62,7 +62,7 @@ public class SnoopXss extends VulTaskImpl {
                     BurpReqRespTools.getContentType(requestResponse), 
                     new SnoopXssCallback(this));
             }
-            TaskManager.vulsChecked.add(String.format("burp.vuls.other.SnoopXss_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
+            TaskManager.vulsChecked.add(String.format("com.alumm0x.task.cves.other.SnoopXss_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
         }
     }
 }

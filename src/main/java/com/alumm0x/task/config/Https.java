@@ -68,7 +68,7 @@ public class Https extends VulTaskImpl {
                     "use http", 
                     null);
             }
-            TaskManager.vulsChecked.add(String.format("burp.task.api.Https_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
+            TaskManager.vulsChecked.add(String.format("com.alumm0x.task.config.Https_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
         }
     }
 }

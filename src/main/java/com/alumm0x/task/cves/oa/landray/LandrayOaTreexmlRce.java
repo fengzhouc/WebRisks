@@ -70,7 +70,7 @@ public class LandrayOaTreexmlRce extends VulTaskImpl {
             poc_body, 
             BurpReqRespTools.getContentType(requestResponse), 
             new LandrayOaTreexmlRceCallback(this));
-        TaskManager.vulsChecked.add(String.format("burp.vuls.oa.landray.LandrayOaTreexmlRce_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
+        TaskManager.vulsChecked.add(String.format("com.alumm0x.task.cves.oa.landray.LandrayOaTreexmlRce_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
     }
 }
 

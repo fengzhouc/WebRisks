@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 
 import com.alumm0x.impl.VulTaskImpl;
 import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
+import com.alumm0x.util.BurpReqRespTools;
 
 import burp.BurpExtender;
 
@@ -26,8 +27,6 @@ public class TaskManager extends Thread {
     public static final ArrayBlockingQueue<HttpRequestResponseWithMarkers> reqQueue = new ArrayBlockingQueue<>(2000);
     // 开启检测的任务清单
     public static final ArrayList<String> tasks = new ArrayList<String>();
-    // 只需要检测一次的清单
-    List<String> oneChecks = new ArrayList<>();
     // 检测后添加已检测标记，用于“oneChecks”的限制
     public static List<String> vulsChecked = new ArrayList<>(); 
     //taskManager的运行控制
@@ -36,10 +35,6 @@ public class TaskManager extends Thread {
         // 创建一个固定大小4的线程池:
         taskManagerthreadPool = Executors.newFixedThreadPool(5);
         threads = new ArrayList<>();
-        oneChecks.add("burp.vuls.oa.landray.LandrayOa");
-        oneChecks.add("burp.vuls.shiro.ShiroUse");
-        oneChecks.add("burp.task.Https");
-        oneChecks.add("burp.task.api.SwaggerApi");
     }
     @Override
     public void run() {
@@ -52,14 +47,10 @@ public class TaskManager extends Thread {
                 for (String taskClass : tasks) {
                     try {
                         // 如果是一次性的任务，则按域名加端口进行
-                        if (oneChecks.contains(taskClass)){
-                            String host = messageInfo.getHttpService().getHost();
-                            int port = messageInfo.getHttpService().getPort();
-                            if (vulsChecked.contains(taskClass + host + port)){
-                                continue; //跳到下一个任务
-                            }
-                            // 添加标记的动作再具体的task中
+                        if (vulsChecked.contains(String.format("%s_%s_%s", taskClass,BurpReqRespTools.getHost(messageInfo),BurpReqRespTools.getPort(messageInfo)))) {
+                            continue; //跳到下一个任务
                         }
+                        // 添加标记的动作再具体的task中
                         @SuppressWarnings("rawtypes")
                         Class c = Class.forName(taskClass);
                         @SuppressWarnings("unchecked")

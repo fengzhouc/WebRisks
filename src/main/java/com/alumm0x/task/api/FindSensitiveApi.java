@@ -41,7 +41,7 @@ public class FindSensitiveApi extends VulTaskImpl {
                 BurpReqRespTools.getContentType(requestResponse), 
                 new FindSensitiveApiCallback(this, banner[1]));
         }
-        TaskManager.vulsChecked.add(String.format("burp.task.api.FindSensitiveApi_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
+        TaskManager.vulsChecked.add(String.format("com.alumm0x.task.api.FindSensitiveApi_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
     }
 }
 

@@ -62,7 +62,7 @@ public class SecureHeader extends VulTaskImpl {
                     "without " + String.join(",", h), 
                     String.join("\n", FIX));
                     // 一般都是全局的，只要发现过一次就可以了
-                    TaskManager.vulsChecked.add(String.format("burp.task.config.SecureHeader_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
+                    TaskManager.vulsChecked.add(String.format("com.alumm0x.task.config.SecureHeader_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
             }
         }
     }

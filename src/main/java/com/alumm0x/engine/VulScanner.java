@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import com.alumm0x.impl.VulTaskImpl;
 import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.ui.MainPanel;
+import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.CommonMess;
 
 import burp.BurpExtender;
@@ -43,6 +44,10 @@ public class VulScanner extends Thread {
             // 并发控制，okhttp的并发太高了，不限制下，burp会很卡
             for (String taskClass : TaskManager.tasks) {
                 try {
+                    // 如果是一次性的任务，则按域名加端口进行
+                    if (TaskManager.vulsChecked.contains(String.format("%s_%s_%s", taskClass,BurpReqRespTools.getHost(messageInfo),BurpReqRespTools.getPort(messageInfo)))) {
+                        continue; //跳到下一个任务
+                    }
                     @SuppressWarnings("rawtypes")
                     Class c = Class.forName(taskClass);
                     @SuppressWarnings("unchecked")

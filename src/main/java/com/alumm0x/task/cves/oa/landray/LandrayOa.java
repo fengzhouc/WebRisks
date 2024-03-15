@@ -42,7 +42,7 @@ public class LandrayOa extends VulTaskImpl {
             poc_body, 
             BurpReqRespTools.getContentType(requestResponse), 
             new LandrayOaCallback(this));
-        TaskManager.vulsChecked.add(String.format("burp.vuls.oa.landray.LandrayOa_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
+        TaskManager.vulsChecked.add(String.format("com.alumm0x.task.cves.oa.landray.LandrayOa_%s_%s",BurpReqRespTools.getHost(requestResponse),BurpReqRespTools.getPort(requestResponse))); //添加检测标记
     }
 }
 
