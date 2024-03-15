@@ -53,7 +53,7 @@ public class IDOR extends VulTaskImpl {
                     new_headers.add(header);
                 }
             }
-            // 请求没有cookie,则不测试
+            // 请求有cookie，进行删除重放
             if (hasCookie){
                 //新的请求包
                 okHttpRequester.send(
@@ -64,6 +64,17 @@ public class IDOR extends VulTaskImpl {
                     new String(BurpReqRespTools.getReqBody(requestResponse)), 
                     BurpReqRespTools.getContentType(requestResponse), 
                     new IDORCallback(this));
+            } else { // 没有就说明，天生不带认证的
+                // 记录日志
+                MainPanel.logAdd(
+                    requestResponse, 
+                    BurpReqRespTools.getHost(requestResponse), 
+                    BurpReqRespTools.getUrlPath(requestResponse),
+                    BurpReqRespTools.getMethod(requestResponse), 
+                    BurpReqRespTools.getStatus(requestResponse), 
+                    IDOR.class.getSimpleName(),
+                    "发现未授权访问（默认不带认证凭证）", 
+                    null);
             }
         }
     }
