@@ -5,6 +5,7 @@ import com.alumm0x.engine.VulScanner;
 import com.alumm0x.listensers.HttpListener;
 import com.alumm0x.listensers.HttpRequestResponseWithMarkers;
 import com.alumm0x.task.XssStore;
+import com.alumm0x.util.BurpReqRespTools;
 import com.alumm0x.util.ClassNameGet;
 import com.alumm0x.util.CommonMess;
 
@@ -446,24 +447,14 @@ public class MainPanel {
     private static void Show(){
         for (HttpRequestResponseWithMarkers messageInfo :
                 CommonMess.requests) {
-            //返回信息
-            IHttpService iHttpService = messageInfo.getHttpService();
-            //请求信息
-            IRequestInfo analyzeRequest = BurpExtender.helpers.analyzeRequest(messageInfo);
-            IResponseInfo analyzeResponse = BurpExtender.helpers.analyzeResponse(messageInfo.getResponse());
-            String host = iHttpService.getHost();
-            String path = analyzeRequest.getUrl().getPath();
-            String method = analyzeRequest.getMethod();
-            short status = analyzeResponse.getStatusCode();
-
             int row = log.size();
             log.add(new LogEntry(
                 row, 
                 new HttpRequestResponseWithMarkers(messageInfo),
-                host, 
-                path, 
-                method, 
-                status, 
+                BurpReqRespTools.getHost(messageInfo), 
+                BurpReqRespTools.getUrlPathWithQuery(messageInfo), 
+                BurpReqRespTools.getMethod(messageInfo), 
+                BurpReqRespTools.getStatus(messageInfo), 
                 "", 
                 "", 
                 ""));
