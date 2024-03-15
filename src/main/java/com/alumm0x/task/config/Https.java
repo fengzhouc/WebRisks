@@ -46,7 +46,7 @@ public class Https extends VulTaskImpl {
                     }
                 }
                 new_headers.add("Host: " + BurpReqRespTools.getHost(requestResponse) + ":80");
-                String url = "http://" + BurpReqRespTools.getHost(requestResponse) + BurpReqRespTools.getUrlPath(requestResponse);
+                String url = String.format("http://%s/%s", BurpReqRespTools.getHost(requestResponse), BurpReqRespTools.getUrlPath(requestResponse));
                 // 检测80端口
                 okHttpRequester.send(
                     url, 
@@ -98,7 +98,8 @@ class HttpsCallback implements Callback {
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         HttpRequestResponseWithMarkers requestResponse = new HttpRequestResponseWithMarkers(BurpReqRespTools.makeBurpReqRespFormOkhttp(call, response, vulTask.requestResponse));
-        if (response.isSuccessful()
+        if (!response.isRedirect() // 有http自动转https的情况 
+            && response.isSuccessful()
             && BurpReqRespTools.getProtocol(requestResponse).equalsIgnoreCase("http")){
             ((Https)vulTask).message.add("open http");
         }
