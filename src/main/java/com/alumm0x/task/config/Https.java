@@ -18,7 +18,6 @@ import java.util.Locale;
 
 public class Https extends VulTaskImpl {
 
-    List<String> message = new ArrayList<>();
 
     public static VulTaskImpl getInstance(HttpRequestResponseWithMarkers requestResponse){
         return new Https(requestResponse);
@@ -36,7 +35,6 @@ public class Https extends VulTaskImpl {
         if (!isStaticSource(BurpReqRespTools.getUrlPath(requestResponse), add)){
             String protocol = BurpReqRespTools.getProtocol(requestResponse);
             if (protocol.toLowerCase(Locale.ROOT).equalsIgnoreCase("https")){
-                message.add("use https");
                 // 检查是否同时开启http/https
                 List<String> new_headers = new ArrayList<>();
                 for (String header :
@@ -46,7 +44,7 @@ public class Https extends VulTaskImpl {
                     }
                 }
                 new_headers.add("Host: " + BurpReqRespTools.getHost(requestResponse) + ":80");
-                String url = String.format("http://%s/%s", BurpReqRespTools.getHost(requestResponse), BurpReqRespTools.getUrlPath(requestResponse));
+                String url = String.format("http://%s%s", BurpReqRespTools.getHost(requestResponse), BurpReqRespTools.getUrlPath(requestResponse));
                 // 检测80端口
                 okHttpRequester.send(
                     url, 
@@ -74,7 +72,7 @@ public class Https extends VulTaskImpl {
 }
 
 class HttpsCallback implements Callback {
-
+    String message = null;
     VulTaskImpl vulTask;
 
     public HttpsCallback(VulTaskImpl vulTask){
@@ -101,7 +99,7 @@ class HttpsCallback implements Callback {
         if (!response.isRedirect() // 有http自动转https的情况 
             && response.isSuccessful()
             && BurpReqRespTools.getProtocol(requestResponse).equalsIgnoreCase("http")){
-            ((Https)vulTask).message.add("open http");
+            message = "open http";
         }
         // 记录日志
         MainPanel.logAdd(
@@ -111,7 +109,7 @@ class HttpsCallback implements Callback {
             BurpReqRespTools.getMethod(requestResponse), 
             BurpReqRespTools.getStatus(requestResponse), 
             Https.class.getSimpleName(),
-            String.join(", ", ((Https)vulTask).message), 
+            message, 
             null);
     }
 }
